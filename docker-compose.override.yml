@@ -1,0 +1,20 @@
+services:
+  web:
+    build:
+      target: dev
+    image: aesys.web:dev
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DOTNET_USE_POLLING_FILE_WATCHER: "1"
+    volumes:
+      - ./Aesys.Web:/src/Aesys.Web
+      - /src/Aesys.Web/obj
+      - /src/Aesys.Web/bin
+      - ./Aesys.Core:/src/Aesys.Core
+      - /src/Aesys.Core/obj
+      - /src/Aesys.Core/bin
+      - ./Directory.Packages.props:/src/Directory.Packages.props
+      - ./data:/src/Aesys.Web/umbraco/Data
+      - umbraco-logs:/src/Aesys.Web/umbraco/Logs
+      - umbraco-media:/src/Aesys.Web/wwwroot/media
+    command: ["dotnet", "watch", "--non-interactive", "--project", "Aesys.Web/Aesys.Web.csproj", "run", "--no-launch-profile"]

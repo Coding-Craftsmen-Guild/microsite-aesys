@@ -1,0 +1,133 @@
+[tools]
+dotnet = "10.0.300"
+node = "22"
+
+[env]
+DOTNET_CLI_TELEMETRY_OPTOUT = "1"
+DOTNET_NOLOGO = "1"
+ASPNETCORE_ENVIRONMENT = "Development"
+
+[tasks.setup]
+description = "Install local .NET tools + client deps — run once after `mise install`."
+depends = ["client:install"]
+run = "dotnet tool restore"
+
+[tasks.restore]
+description = "Restore NuGet packages for Aesys.Web."
+run = "dotnet restore Aesys.Web/Aesys.Web.csproj"
+
+[tasks.build]
+description = "Debug build (includes a fresh Vite client build)."
+run = "dotnet build Aesys.Web/Aesys.Web.csproj"
+depends = ["restore", "client:build"]
+
+[tasks.dev]
+description = "Run Umbraco + Vite dev server with HMR (single terminal). Bundles uSync first."
+depends = ["usync:bundle", "client:install"]
+dir = "Aesys.Web"
+run = "npm run dev"
+
+[tasks.run]
+description = "Run Umbraco without watch (prod-like, uses pre-built Vite bundle). Bundles uSync + builds client first."
+run = "dotnet run --project Aesys.Web/Aesys.Web.csproj"
+depends = ["usync:bundle", "client:build"]
+
+[tasks.format]
+description = "Format all code (C# via csharpier + TS/CSS/JSON via Prettier)."
+depends = ["client:format"]
+run = "dotnet csharpier format ."
+
+[tasks."format:check"]
+description = "Verify all formatting (csharpier + Prettier) — CI gate."
+depends = ["client:format:check"]
+run = "dotnet csharpier check ."
+
+[tasks.clean]
+description = "Remove build artifacts."
+run = "dotnet clean Aesys.Web/Aesys.Web.csproj"
+
+[tasks."docker:build"]
+description = "Build the production image."
+run = "docker build --target runtime -t aesys.web:latest ."
+
+[tasks."docker:build-dev"]
+description = "Build the dev image (dotnet watch)."
+run = "docker build --target dev -t aesys.web:dev ."
+
+[tasks."docker:up"]
+description = "Start the stack (compose picks up override.yml automatically in dev)."
+run = "docker compose up --build"
+
+[tasks."docker:down"]
+description = "Stop the stack and remove containers."
+run = "docker compose down"
+
+[tasks."docker:logs"]
+description = "Tail container logs."
+run = "docker compose logs -f web"
+
+[tasks.clone-project]
+description = "Clone this template into a new directory and rename the placeholder. Usage: mise run clone-project <NewName> <DestinationPath>"
+run = "bash tools/clone-project.sh"
+run_windows = 'C:\PROGRA~1\Git\bin\bash.exe tools/clone-project.sh'
+
+[tasks."usync:bundle"]
+description = "Flat-copy all *.config under Aesys.Core/{Components,Compositions,Pages} into Aesys.Web/uSync/v17/ContentTypes/ so uSync's startup import can apply them."
+run = "bash tools/usync-bundle.sh"
+run_windows = 'C:\PROGRA~1\Git\bin\bash.exe tools/usync-bundle.sh'
+
+[tasks."skills:sync"]
+description = "Pull Claude skills & agents from upstream repos listed in tools/skills-sources.json into .claude/."
+run = "bash tools/sync-skills.sh"
+run_windows = 'C:\PROGRA~1\Git\bin\bash.exe tools/sync-skills.sh'
+
+[tasks."skills:check"]
+description = "Dry-run skills:sync — exits non-zero if any upstream change is pending. Useful in pre-commit/CI."
+run = "bash tools/sync-skills.sh --check"
+run_windows = 'C:\PROGRA~1\Git\bin\bash.exe tools/sync-skills.sh --check'
+
+[tasks."client:install"]
+description = "Install Aesys.Web client dependencies (idempotent — npm install)."
+dir = "Aesys.Web"
+run = "npm install --no-audit --no-fund"
+
+[tasks."client:dev"]
+description = "Run only the Vite dev server (escape hatch — `mise run dev` runs it together with dotnet watch)."
+depends = ["client:install"]
+dir = "Aesys.Web"
+run = "npm run dev:vite"
+
+[tasks."client:build"]
+description = "Build the production client bundle into Aesys.Web/wwwroot/dist/."
+depends = ["client:install"]
+dir = "Aesys.Web"
+run = "npm run build"
+
+[tasks."dotnet:watch"]
+description = "Run only dotnet watch (escape hatch — `mise run dev` runs it together with Vite)."
+depends = ["usync:bundle"]
+run = "dotnet watch --project Aesys.Web/Aesys.Web.csproj"
+
+[tasks."client:lint"]
+description = "Lint Aesys.Web TS sources with ESLint."
+depends = ["client:install"]
+dir = "Aesys.Web"
+run = "npm run lint"
+
+[tasks."client:lint:fix"]
+description = "Lint + auto-fix Aesys.Web TS sources."
+depends = ["client:install"]
+dir = "Aesys.Web"
+run = "npm run lint:fix"
+
+[tasks."client:format"]
+description = "Format Aesys.Web TS/CSS/JSON sources with Prettier."
+depends = ["client:install"]
+dir = "Aesys.Web"
+run = "npm run format"
+
+[tasks."client:format:check"]
+description = "Check Aesys.Web Prettier formatting (CI gate)."
+depends = ["client:install"]
+dir = "Aesys.Web"
+run = "npm run format:check"

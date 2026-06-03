@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+
+@source "../Views/**/*.cshtml";
+@source "../Views/**/*.ts";
+@source "../Client/**/*.ts";
+@source "../../Aesys.Core/**/*.cs";
+
+@import './tokens/tokens.scss';
+@import './tokens/fonts.scss';
+@import './base/reset.scss';
+@import './base/base.scss';
+@import './typography/typography.scss';
+@import './utilities/utilities.scss';

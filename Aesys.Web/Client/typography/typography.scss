@@ -1,0 +1,49 @@
+/* Base element typography — mapped to the design system type scale
+   (docs/design-system.md). Component/utility classes can override per context;
+   the accent word in headings is applied inline with `text-accent-500`. */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  color: var(--color-navy);
+}
+
+/* Hero / blog-single H1 — 62px / lh 69px, Black (900). */
+h1 {
+  font-size: var(--text-h1);
+  line-height: var(--text-h1--line-height);
+  font-weight: 900;
+}
+
+/* Section heading / page H1 / pull-quote — 44px / lh 70px, ExtraBold (800). */
+h2 {
+  font-size: var(--text-h2);
+  line-height: var(--text-h2--line-height);
+  font-weight: 800;
+}
+
+/* Card / step / column title — 19px / lh 28px, ExtraBold (800). */
+h3 {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: 800;
+}
+
+h4 {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: 700;
+}
+
+/* Eyebrow-scale headings — 14px, SemiBold (600), uppercase. */
+h5,
+h6 {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  font-weight: 600;
+  text-transform: uppercase;
+}

@@ -1,0 +1,31 @@
+@model Aesys.Core.Components.UI.Button.ButtonViewModel
+@using Aesys.Core.Components.UI.Button
+
+@{
+    var classes = Html.Cn(
+        ButtonVariants.Base,
+        ButtonVariants.Variant(Model.Variant),
+        ButtonVariants.Size(Model.Size));
+    var arrowClass = ButtonVariants.ArrowClass(Model.Variant);
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.Href))
+{
+    <a href="@Model.Href" target="@Model.Target" class="@classes">
+        <span>@Model.Label</span>
+        @if (Model.Arrow)
+        {
+            <span class="@arrowClass" aria-hidden="true">&#10148;</span>
+        }
+    </a>
+}
+else
+{
+    <button type="button" class="@classes">
+        <span>@Model.Label</span>
+        @if (Model.Arrow)
+        {
+            <span class="@arrowClass" aria-hidden="true">&#10148;</span>
+        }
+    </button>
+}

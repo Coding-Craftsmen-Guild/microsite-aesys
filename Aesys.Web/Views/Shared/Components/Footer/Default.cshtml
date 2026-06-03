@@ -1,0 +1,13 @@
+@model Aesys.Core.Compositions.Footer.FooterViewModel
+
+<footer class="@Html.Cn("flex items-center justify-between gap-4 px-6 py-6 border-t border-aesys-100 text-sm text-aesys-700")" data-component="footer">
+    @if (Model.Logo is not null)
+    {
+        <img src="@Model.Logo.Url()" alt="" class="max-h-8 w-auto" />
+    }
+    else
+    {
+        <span class="italic text-aesys-400">no logo set</span>
+    }
+    <span>&copy; @DateTime.UtcNow.Year</span>
+</footer>

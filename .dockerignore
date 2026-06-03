@@ -1,0 +1,60 @@
+# Keep the build context lean: skip everything we don't need to copy into the image.
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE / editor
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+
+# Docker itself
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Docs / misc
+README.md
+LICENSE
+*.md
+
+# Build output
+**/bin/
+**/obj/
+**/out/
+**/publish/
+**/[Dd]ebug/
+**/[Rr]elease/
+
+# Node (front-end tooling via Vite + Tailwind)
+**/node_modules/
+**/npm-debug.log
+**/yarn-error.log
+# Vite output is rebuilt inside the image by the `client` stage — never bake host artifacts in
+**/dist/
+**/.vite/
+
+# Umbraco runtime artefacts that must never be baked into the image
+Aesys.Web/umbraco/Data/TEMP/
+Aesys.Web/umbraco/Data/CreatedPackages/
+Aesys.Web/umbraco/Data/*.sqlite.db
+Aesys.Web/umbraco/Data/*.sqlite.db-shm
+Aesys.Web/umbraco/Data/*.sqlite.db-wal
+Aesys.Web/umbraco/Logs/
+Aesys.Web/wwwroot/media/
+
+# JSON schemas regenerated on each build
+Aesys.Web/appsettings-schema.json
+Aesys.Web/appsettings-schema.*.json
+Aesys.Web/umbraco-package-schema.json
+
+# Tooling (host-only, never needed inside the image)
+.mise.toml
+.mise.local.toml
+.config/
+docker-compose*.yml

@@ -1,0 +1,11 @@
+body {
+  font-family: var(--font-sans);
+  color: var(--color-navy);
+  background: white;
+}
+
+/* Brand focus ring — accent green (matches the design's green affordances). */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

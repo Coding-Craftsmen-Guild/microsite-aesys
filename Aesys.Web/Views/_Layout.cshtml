@@ -1,0 +1,23 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+<!DOCTYPE html>
+<html lang="@Model.GetCultureFromDomains()">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta-fields></meta-fields>
+    <vite-asset entry="Client/main.ts" />
+    <render-script position="HeadBottom"></render-script>
+</head>
+
+<body>
+    <render-script position="BodyTop"></render-script>
+    @await Component.InvokeAsync("Header")
+
+    @RenderBody()
+
+    @await Component.InvokeAsync("Footer")
+    <render-script position="BodyBottom"></render-script>
+</body>
+
+</html>

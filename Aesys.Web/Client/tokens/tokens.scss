@@ -1,0 +1,76 @@
+@theme {
+  /* ---------------------------------------------------------------------------
+     Brand colors — from the Figma design system (docs/design-system.md).
+     Two brand colors only: navy (#0E0E2C) + olive-lime accent (#A3B440).
+     The `aesys` ramp is anchored on the navy so Tailwind's bg-aesys-* utilities
+     resolve to on-brand tints/shades; the accent gets its own `accent` ramp.
+  --------------------------------------------------------------------------- */
+  --color-aesys-50: #e9e9ef;
+  --color-aesys-100: #c8c8d6;
+  --color-aesys-200: #9595ad;
+  --color-aesys-300: #636385;
+  --color-aesys-400: #31315c;
+  --color-aesys-500: #1a1a44;
+  --color-aesys-600: #15153a;
+  --color-aesys-700: #111133;
+  --color-aesys-800: #0e0e2c; /* navy — primary dark surface / text on light */
+  --color-aesys-900: #08081a;
+
+  --color-accent-50: #f6f8ec;
+  --color-accent-100: #e9eecb;
+  --color-accent-200: #d7e0a3;
+  --color-accent-300: #c4d27a;
+  --color-accent-400: #b3c35d;
+  --color-accent-500: #a3b440; /* accent — the single brand green */
+  --color-accent-600: #8a9935;
+  --color-accent-700: #6c772a;
+  --color-accent-800: #4e5620;
+  --color-accent-900: #353a16;
+
+  /* Semantic aliases (use these in markup/variants over raw ramp steps) */
+  --color-navy: var(--color-aesys-800);
+  --color-accent: var(--color-accent-500);
+  --color-surface-light: #f8f8f8; /* every light card + the form panel */
+  --color-divider: #d9d9d9; /* 1px hairlines */
+  --color-scrim: rgb(14 14 44 / 0.6); /* navy overlay on photo bands */
+
+  /* ---------------------------------------------------------------------------
+     Typography — single family: Red Hat Display (400/600/700/800/900).
+  --------------------------------------------------------------------------- */
+  --font-sans: 'Red Hat Display', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-sans);
+
+  /* Type scale — distinct sizes from the design (px → rem @16).
+     Pair with line-heights below via text-* utilities. */
+  --text-footnote: 0.5625rem; /* 9px  */
+  --text-footnote--line-height: 1.25rem; /* 20px */
+  --text-base: 0.875rem; /* 14px — body / nav / footer / labels */
+  --text-base--line-height: 1.25rem; /* 20px */
+  --text-lg: 1.1875rem; /* 19px — subhead / card title / list / lead */
+  --text-lg--line-height: 1.75rem; /* 28px */
+  --text-chip: 1.8125rem; /* 29px — chip numerals */
+  --text-chip--line-height: 1; /* 29px */
+  --text-stat: 2.625rem; /* 42px — homepage stat numbers */
+  --text-stat--line-height: 4.75rem; /* 76px */
+  --text-h2: 2.75rem; /* 44px — section headings / page H1 / pull-quotes */
+  --text-h2--line-height: 4.375rem; /* 70px */
+  --text-h1: 3.875rem; /* 62px — hero / blog single H1 */
+  --text-h1--line-height: 4.3125rem; /* 69px */
+
+  /* ---------------------------------------------------------------------------
+     Radius — DEFAULTS OVERRIDDEN to the design's values.
+     rounded-sm 6 (tick chips) · rounded-md 15 (cards/inputs) ·
+     rounded-lg 20 (numbered chips) · rounded-xl 22 (photos) · rounded-full pill
+  --------------------------------------------------------------------------- */
+  --radius-sm: 0.375rem; /* 6px  */
+  --radius-md: 0.9375rem; /* 15px */
+  --radius-lg: 1.25rem; /* 20px */
+  --radius-xl: 1.375rem; /* 22px */
+
+  /* ---------------------------------------------------------------------------
+     Control heights — surfaced as spacing tokens so h-* / w-* can use them.
+  --------------------------------------------------------------------------- */
+  --spacing-control-sm: 1.875rem; /* 30px — small pills / tags / lang toggle */
+  --spacing-control-input: 2.25rem; /* 36px — inputs / selects */
+  --spacing-control: 2.5625rem; /* 41px — buttons / primary pills */
+}

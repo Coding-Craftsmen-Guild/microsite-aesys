@@ -1,0 +1,16 @@
+/* Project utilities (Tailwind v4 @utility). Compiled by sass-embedded, then the
+   @utility/@apply directives are handled by the Tailwind Vite plugin. */
+
+/* .section — the standard centered content container.
+   max-w-7xl (1280px) per the design system, horizontally centered, with
+   responsive gutters drawn from native Tailwind spacing steps (no fixed 156px):
+   px-6 (24) mobile · px-10 (40) ≥sm · px-20 (80) ≥lg. */
+@utility section {
+  @apply mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-20;
+}
+
+/* .grid-cards — standardized card grid gap (gap-5 = 20px, the /4-aligned value
+   for the design's ~19px gutters). Column count is set per-use with grid-cols-*. */
+@utility grid-cards {
+  @apply grid gap-5;
+}
