@@ -1,3 +1,21 @@
+/* The bar is transparent at the top of the page (it overlays the navy hero) and
+   gains a translucent navy background + backdrop blur once header.ts adds `.scrolled`
+   past the threshold. HeaderVariants.Base handles the fixed positioning + transition.
+   The navy is kept slightly translucent so the backdrop blur is actually visible. */
 [data-component='header'] {
-  background-color: var(--color-aesys-50);
+  background-color: transparent;
+
+  &.scrolled {
+    background-color: color-mix(in srgb, var(--color-aesys-800) 70%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .header-mobile-menu {
+    display: none;
+  }
+
+  &.is-open .header-mobile-menu {
+    display: flex;
+  }
 }

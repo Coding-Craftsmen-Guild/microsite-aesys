@@ -2,19 +2,17 @@ namespace Aesys.Core.Compositions.Header;
 
 public static class HeaderVariants
 {
-    public const string Base =
-        "flex items-center justify-between gap-4 px-6 py-4 border-b border-aesys-100";
+    // Fixed bar that overlays the hero (no flow space) and is transparent at the top of
+    // the page so it blends into the navy hero. The `scrolled` class (toggled by header.ts
+    // past the scroll threshold) fades in a translucent navy background + backdrop blur —
+    // see header.scss. z-40 keeps it above page content, below modals.
+    public const string Base = "fixed inset-x-0 top-0 z-40 transition-colors duration-300";
 
-    public const string Logo = "max-h-10 w-auto";
-
-    public const string Toggle =
-        "inline-flex items-center justify-center rounded-md p-2 text-aesys-700 hover:bg-aesys-50 focus-visible:ring-2 focus-visible:ring-aesys-500";
-
-    public static string Size(string size) =>
-        size switch
-        {
-            "sm" => "h-12",
-            "lg" => "h-20",
-            _ => "h-16",
-        };
+    // White nav link; active = bold accent. Used in both the desktop bar and the
+    // mobile drawer, with C# picking the active variant — kept as a helper because
+    // it's a genuine repeat plus conditional logic (the rest is inlined in the view).
+    public static string NavLink(bool active) =>
+        active
+            ? "text-base font-bold text-accent-500 transition"
+            : "text-base font-normal text-white transition hover:text-accent-500";
 }

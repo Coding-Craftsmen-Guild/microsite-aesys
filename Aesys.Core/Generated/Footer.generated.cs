@@ -22,10 +22,20 @@ namespace Aesys.Core.Models
 	/// <summary>Footer</summary>
 	public partial interface IFooter : IPublishedContent
 	{
-		/// <summary>Logo</summary>
+		/// <summary>Address</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		global::Umbraco.Cms.Core.Models.MediaWithCrops FooterLogo { get; }
+		string Address { get; }
+
+		/// <summary>Columns</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Columns { get; }
+
+		/// <summary>Tagline</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		string Tagline { get; }
 	}
 
 	/// <summary>Footer</summary>
@@ -60,16 +70,42 @@ namespace Aesys.Core.Models
 		// properties
 
 		///<summary>
-		/// Logo
+		/// Address: Address block under the tagline. One line per row, e.g. "Applied Energy Systems doo" / "Novi Sad, Srbija".
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("footerLogo")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops FooterLogo => GetFooterLogo(this, _publishedValueFallback);
+		[ImplementPropertyType("address")]
+		public virtual string Address => GetAddress(this, _publishedValueFallback);
 
-		/// <summary>Static getter for Logo</summary>
+		/// <summary>Static getter for Address</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static global::Umbraco.Cms.Core.Models.MediaWithCrops GetFooterLogo(IFooter that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(publishedValueFallback, "footerLogo");
+		public static string GetAddress(IFooter that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "address");
+
+		///<summary>
+		/// Columns: Link columns, e.g. STRANICE / KONTAKT / BRZI LINKOVI.
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("columns")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Columns => GetColumns(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Columns</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static global::Umbraco.Cms.Core.Models.Blocks.BlockListModel GetColumns(IFooter that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(publishedValueFallback, "columns");
+
+		///<summary>
+		/// Tagline: Bold line under the logo, e.g. "Pametna energija, za pametnu industriju."
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("tagline")]
+		public virtual string Tagline => GetTagline(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Tagline</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static string GetTagline(IFooter that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "tagline");
 	}
 }

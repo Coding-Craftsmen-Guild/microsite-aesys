@@ -1,0 +1,36 @@
+@model Aesys.Core.Compositions.IntroText.IntroTextViewModel
+@using Aesys.Core.Compositions.IntroText
+
+@{
+    var hasText = Model.Text is not null && !string.IsNullOrWhiteSpace(Model.Text.ToString());
+}
+
+<div class="@Html.Cn("flex flex-col items-start gap-6", Model.ClassName)" data-component="intro-text">
+    @if (!string.IsNullOrWhiteSpace(Model.Eyebrow))
+    {
+        @await Component.InvokeAsync("Pill", new { label = Model.Eyebrow, theme = Model.Theme })
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Title))
+    {
+        <h2 class="@Html.Cn("text-h2 tracking-tight", IntroTextVariants.Title(Model.Theme))">@Html.Raw(Model.Title)</h2>
+    }
+
+    @if (hasText)
+    {
+        <div class="@Html.Cn("max-w-2xl text-lg [&_a]:underline [&_a]:text-accent-500 [&_p]:mt-4 [&_p:first-child]:mt-0 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-5 [&_strong]:font-bold", IntroTextVariants.Text(Model.Theme))">@Html.Raw(Model.Text)</div>
+    }
+
+    @if (Model.Button is not null)
+    {
+        @await Component.InvokeAsync("Button", new
+        {
+            label = Model.Button.Name,
+            href = Model.Button.Url,
+            target = Model.Button.Target,
+            variant = IntroTextVariants.ButtonVariant(Model.Theme),
+            size = "md",
+            arrow = true,
+        })
+    }
+</div>

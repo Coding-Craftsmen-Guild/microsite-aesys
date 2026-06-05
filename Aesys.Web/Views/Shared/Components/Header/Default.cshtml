@@ -1,40 +1,72 @@
 @model Aesys.Core.Compositions.Header.HeaderViewModel
 @using Aesys.Core.Compositions.Header
 
-<nav class="bg-white border-b border-gray-200" data-component="header">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex h-16 items-center justify-between">
+<nav class="@HeaderVariants.Base" data-component="header">
+  <div class="wrapper">
+  <div class="relative flex h-20 items-center justify-between gap-4 border-b border-white">
 
-            <div class="shrink-0">
-                @if (Model.Logo is not null)
-                {
-                    <a href="/" aria-label="Home">
-                        <img src="@Model.Logo.Url()" alt="" class="@HeaderVariants.Logo" />
-                    </a>
-                }
-                else
-                {
-                    <a href="/" class="text-xl font-bold">MyApp</a>
-                }
-            </div>
+    <div class="shrink-0">
+        <a href="/" aria-label="@(string.IsNullOrWhiteSpace(Model.SiteName) ? "Home" : Model.SiteName)">
+            @if (Model.Logo is not null)
+            {
+                <img src="@Model.Logo.Url()" alt="@Model.SiteName" class="max-h-10 w-auto" />
+            }
+            else
+            {
+                <span class="text-xl font-black text-white">@Model.SiteName</span>
+            }
+        </a>
+    </div>
 
-            <div class="hidden md:flex items-center gap-6">
-                <a href="#" class="text-gray-700 hover:text-black">Home</a>
-                <a href="#" class="text-gray-700 hover:text-black">About</a>
-                <a href="#" class="text-gray-700 hover:text-black">Services</a>
-                <a href="#" class="text-gray-700 hover:text-black">Contact</a>
+    <div class="hidden items-center gap-8 md:flex">
+        @foreach (var item in Model.Items)
+        {
+            <a href="@item.Url" class="@HeaderVariants.NavLink(item.IsActive)">@item.Label</a>
+        }
+    </div>
 
-                <button class="rounded-md bg-black px-4 py-2 text-white hover:opacity-90">
-                    Login
-                </button>
-            </div>
+    <div class="hidden items-center gap-3 md:flex">
+        @await Component.InvokeAsync("LanguageSelector", new { languages = Model.Languages })
 
-            <button type="button" class="md:hidden p-2" data-header-toggle aria-label="Toggle menu">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
+        @if (Model.Button is not null)
+        {
+            @await Component.InvokeAsync("Button", new
+            {
+                label = Model.Button.Name,
+                href = Model.Button.Url,
+                target = Model.Button.Target,
+                variant = "primary",
+                size = "sm",
+                arrow = true,
+            })
+        }
+    </div>
 
-        </div>
+    <button type="button" class="inline-flex items-center justify-center rounded-md p-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 md:hidden" data-header-toggle aria-label="Toggle menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    </button>
+
+  </div>
+  </div>
+
+    <div class="header-mobile-menu absolute inset-x-0 top-16 z-50 flex flex-col gap-4 border-b border-divider/20 bg-aesys-800 px-6 py-6 md:hidden">
+        @foreach (var item in Model.Items)
+        {
+            <a href="@item.Url" class="@HeaderVariants.NavLink(item.IsActive)">@item.Label</a>
+        }
+        @if (Model.Button is not null)
+        {
+            @await Component.InvokeAsync("Button", new
+            {
+                label = Model.Button.Name,
+                href = Model.Button.Url,
+                target = Model.Button.Target,
+                variant = "primary",
+                size = "sm",
+                arrow = true,
+            })
+        }
     </div>
 </nav>

@@ -91,6 +91,22 @@ If a property references a tab that isn't declared on the same doctype, uSync lo
 
 The Components-on-HomePage round-trip (2026-05) hit exactly this — HomePage referenced the `content` tab inherited from Page composition, but didn't declare it locally, so uSync dropped the property silently. See [Aesys.Core/Pages/HomePage/homepage.config](../../../Aesys.Core/Pages/HomePage/homepage.config) for the resolved shape.
 
+## `IsElement` and compositions — the element/non-element rule
+
+`<IsElement>` is not a free choice for a composition. **ModelsBuilder aborts the entire model generation** if an element type (`IsElement=true`) composes a non-element type (`IsElement=false`):
+
+```
+Cannot generate model for type 'X' because it is an element type, but it is composed of 'Y' which is not.
+```
+
+This is whole-batch fatal — *no* models regenerate until you fix it (watch for it in the `mise run dev` log; it also writes `Aesys.Core/Generated/models.err`). Set a composition's `IsElement` by **who composes it**:
+
+- Composed only by page/document types (`IsElement=false`, e.g. `Header`/`Footer`/`GlobalSettings` on `HomePage`) → composition is `IsElement=false`.
+- Composed by **element blocks** (`IsElement=true`, e.g. a `Section`/`IntroText` mixin composed by `HeroBanner`/`TextWithImage`) → composition **must be `IsElement=true`**.
+- Composed by both → `IsElement=true` (the stricter wins; a page may still compose an element type).
+
+So a content-bearing mixin shared by blocks lives under `Compositions/` but is authored with `<IsElement>true</IsElement>`. This is the one case where a `Compositions/` `.config` is an element type.
+
 ## GUID uniqueness — mandatory rule
 
 A duplicate `Key` across uSync items causes silent overwrites on import. **Before assigning any GUID** to a new DocumentType (and later Dictionary entry), prove it is globally unique across the repo.

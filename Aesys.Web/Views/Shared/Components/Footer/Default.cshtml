@@ -1,13 +1,60 @@
 @model Aesys.Core.Compositions.Footer.FooterViewModel
 
-<footer class="@Html.Cn("flex items-center justify-between gap-4 px-6 py-6 border-t border-aesys-100 text-sm text-aesys-700")" data-component="footer">
-    @if (Model.Logo is not null)
-    {
-        <img src="@Model.Logo.Url()" alt="" class="max-h-8 w-auto" />
-    }
-    else
-    {
-        <span class="italic text-aesys-400">no logo set</span>
-    }
-    <span>&copy; @DateTime.UtcNow.Year</span>
+<footer class="bg-aesys-800 text-base text-white" data-component="footer">
+    <div class="wrapper py-12">
+        <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:gap-8">
+
+            <div class="flex flex-col gap-6">
+                <a href="/" aria-label="@(string.IsNullOrWhiteSpace(Model.SiteName) ? "Home" : Model.SiteName)" class="inline-flex">
+                    @if (Model.Logo is not null)
+                    {
+                        <img src="@Model.Logo.Url()" alt="@Model.SiteName" class="max-h-8 w-auto" />
+                    }
+                    else
+                    {
+                        <span class="text-xl font-black text-white">@Model.SiteName</span>
+                    }
+                </a>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Tagline))
+                {
+                    <p class="max-w-60 font-bold leading-5">@Model.Tagline</p>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.Address))
+                {
+                    <p class="whitespace-pre-line leading-5 text-white/80">@Model.Address</p>
+                }
+            </div>
+
+            @foreach (var column in Model.Columns)
+            {
+                <div class="flex flex-col gap-4">
+                    @if (!string.IsNullOrWhiteSpace(column.Title))
+                    {
+                        <p class="font-bold uppercase tracking-wide">@column.Title</p>
+                    }
+                    @if (column.Links.Count > 0)
+                    {
+                        <ul class="flex flex-col gap-1">
+                            @foreach (var link in column.Links)
+                            {
+                                <li>
+                                    <a href="@link.Url"
+                                       target="@(string.IsNullOrEmpty(link.Target) ? null : link.Target)"
+                                       rel="@(link.Target == "_blank" ? "noopener" : null)"
+                                       class="@Html.Cn("inline-block leading-5 text-white/80 transition hover:text-accent-500", link.Indented ? "pl-3" : "")">@link.Label</a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="mt-12 flex flex-col gap-4 border-t border-white/15 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <p class="leading-5 text-white/80">&copy; @DateTime.UtcNow.Year Applied Energy Systems doo. Sva prava zadržana.</p>
+            @await Component.InvokeAsync("LanguageSelector", new { languages = Model.Languages })
+        </div>
+    </div>
 </footer>

@@ -113,10 +113,35 @@ Follow this order whenever you add or change a doctype/property that your C# wil
 
 1. Author/edit the `.config` source under `Aesys.Core/`.
 2. `mise run usync:bundle` — flatten sources into `uSync/v17/ContentTypes/`.
-3. **Run the app** (`mise run dev`) so uSync imports the schema and MB regenerates `*.generated.cs`. If existing model-consuming C# (other ViewComponents) blocks the build so the app can't boot, temporarily move those `.cs` aside (Razor views are runtime-compiled and don't block the build), boot once, then restore them.
-4. **Then** write/finish the C# (ViewComponents, etc.) that references the new members and rebuild — `dotnet watch` picks it up green.
+3. **Run the app via `mise run dev`** so uSync imports the schema and MB regenerates `*.generated.cs`. **Use `mise run dev` (dotnet watch), not a bare `dotnet run`** — the watch-driven cycle is what reliably writes the regenerated models to `Aesys.Core/Generated/`. A uSync startup import alone does **not** force the `SourceCodeAuto` write; if models still don't appear, a content-type **Save** in the backoffice forces a full regen. If existing model-consuming C# (other ViewComponents) blocks the build so the app can't boot, temporarily move those `.cs` aside (Razor views are runtime-compiled and don't block the build), boot once, then restore them.
+4. **Then** write/finish the C# (ViewComponents, etc.) that references the new members and rebuild — `dotnet watch` picks it up green. Note: when a regen changes a generated model's **base class or interface list** (e.g. a doctype starts composing a mixin), `dotnet watch` reports a hot-reload **rude edit** (`ENC0014: Updating the base class … requires restarting`) and prompts to restart — answer yes / restart.
 
 A fresh clone with no `data/` DB has no content models yet; the first `mise run dev` performs the unattended install and the initial generation. Committed generated models must match the configured `Umbraco:CMS:ModelsBuilder:ModelsNamespace` (`Aesys.Core.Models`) — stale files under a different namespace won't satisfy `Models.X` references until regenerated.
+
+**Composition interfaces (`IXxx`) are generated lazily.** ModelsBuilder emits the interface for a composition **only once another doctype actually composes it**. So a ViewComponent written as `Invoke(IXxx source)` won't compile until a consumer exists and the app has regenerated. For a composition with no consumer yet, either take the concrete `Models.Xxx` for now, or add the consumer first.
+
+### Compositions consumed by element blocks must be `IsElement=true` (IMPORTANT)
+
+ModelsBuilder **refuses to generate any models** if an element type (`IsElement=true`) composes a non-element type (`IsElement=false`). The whole generation aborts with:
+
+```
+Cannot generate model for type 'X' because it is an element type, but it is composed of 'Y' which is not.
+```
+
+So a composition's `IsElement` flag depends on **who consumes it**, not on the fact that it lives under `Compositions/`:
+
+- A composition consumed only by **page/document types** (`IsElement=false`) — e.g. `Header`, `Footer`, `GlobalSettings` on `HomePage` — is itself `IsElement=false` (the classic site-wide mixin).
+- A composition consumed by **element blocks** (`IsElement=true`) — e.g. a `Section` or `IntroText` mixin composed by `HeroBanner` / `TextWithImage` — **must itself be `IsElement=true`** (a content-bearing mixin shared by blocks is an element composition).
+
+If a mixin is composed by both a page and an element block, make it `IsElement=true` (elements are the stricter constraint); a page can still compose an element type.
+
+### Block editor labels use Umbraco Flavored Markdown (UFM), not `{{angular}}`
+
+The pre-14 AngularJS backoffice rendered block-list/grid labels with `{{propertyAlias}}`. **That syntax is dead in Umbraco 14+ (incl. 17)** — it renders literally. The new backoffice uses **UFM**: `{=propertyAlias}` (shorthand for `{umbValue: propertyAlias}`), set in the Block List/Grid DataType's `"label"` JSON. Useful filters:
+
+- `{=title | fallback:Untitled}` — default when empty
+- `{=text | truncate:50}` / `{=text | wordLimit:5}` — length limits
+- `{=body | stripHtml}` — **required** for a richtext property; UFM won't render raw richtext markup otherwise.
 
 ### Page templates — managed in code, NEVER put `Layout` in a template view
 
@@ -134,13 +159,17 @@ Four buckets under `Aesys.Core/` — pick by **scope** and **whether Umbraco bac
 | **Pure UI** | `Components/UI/<Name>/` | No | No | No | No | [Button](Aesys.Core/Components/UI/Button/) — invoked inline by other components |
 | **Page-scoped block** | `Components/<Page>/<Name>/` | Yes, `IsElement=true` | Yes | Yes | Yes | [HeroBanner](Aesys.Core/Components/HomePage/HeroBanner/) under HomePage |
 | **Shared block** | `Shared/<Name>/` | Yes, `IsElement=true` | Yes | Yes | Yes (any page's block-list) | *(none yet — first cross-page reusable block goes here)* |
-| **Site-wide composition** | `Compositions/<Name>/` | Yes, `IsElement=false` (mixin) | Yes | Yes | No | [Header](Aesys.Core/Compositions/Header/), [Footer](Aesys.Core/Compositions/Footer/), [GlobalSettings](Aesys.Core/Compositions/GlobalSettings/) |
+| **Site-wide composition** | `Compositions/<Name>/` | Yes, `IsElement=false` mixin¹ | Yes | Yes | No | [Header](Aesys.Core/Compositions/Header/), [Footer](Aesys.Core/Compositions/Footer/), [GlobalSettings](Aesys.Core/Compositions/GlobalSettings/) |
+
+¹ `IsElement=false` only when consumed by page/document types. A composition consumed by **element blocks** (e.g. a `Section`/`IntroText` mixin composed by `HeroBanner`/`TextWithImage`) **must be `IsElement=true`** — see `### Compositions consumed by element blocks must be IsElement=true` under `## Umbraco specifics`.
 
 Rules:
 - The folder path under `Aesys.Core/` determines the C# namespace (`Aesys.Core.Components.UI.Button`, `Aesys.Core.Components.HomePage.HeroBanner`, `Aesys.Core.Shared.<Name>`, `Aesys.Core.Compositions.Header`).
 - Razor partials always live at `Aesys.Web/Views/Shared/Components/<Name>/Default.cshtml` regardless of bucket — ViewComponent discovery is by class name, not source folder.
 - Pure-UI components have **no** `.config`, **no** entry in any block editor DataType, and are invoked inline (`Component.InvokeAsync("Button", new { ... })`).
-- Compositions take an **interface** in `Invoke(IHeader source)`; `Components/<Page>/<Name>/` and `Shared/<Name>/` element types take the **class** as `Invoke(Models.X source)`; pure UI takes plain primitives.
+- Compositions take an **interface** in `Invoke(IHeader source)`; `Components/<Page>/<Name>/` and `Shared/<Name>/` element types take the **class** as `Invoke(Models.X source)`; pure UI takes plain primitives. (Composition interfaces are generated lazily — see the bootstrap-ordering note.)
+- **Wrap section chrome with the `<section-block>` tag helper, not hand-rolled `<section>` markup.** It renders the standard outer chrome — dark surface + full-bleed background image + scrim when a `bg-image` is set, light section + gray bottom border when not — plus the inner `wrapper` container, and accepts Razor children (a ViewComponent can't). Pass `bg-image="@(Model.Background?.Url())"`; arbitrary attributes (`id`, `data-component`, `aria-*`) and `class` pass through (`class` is TwMerge'd). It owns the first-block header offset. Canonical consumers: [HeroBanner](Aesys.Web/Views/Shared/Components/HeroBanner/Default.cshtml), [TextWithImage](Aesys.Web/Views/Shared/Components/TextWithImage/Default.cshtml).
+- **Design-system radius scale is overridden** in [tokens.scss](Aesys.Web/Client/tokens/tokens.scss) (`--radius-sm/md/lg/xl` only). Stick to `rounded-sm/md/lg/xl`; raw Tailwind steps like `rounded-2xl`/`rounded-3xl` are **unmapped** and won't render the brand radius.
 
 ## uSync
 

@@ -1,0 +1,7 @@
+@model Aesys.Core.Components.UI.Pill.PillViewModel
+@using Aesys.Core.Components.UI.Pill
+
+@if (!string.IsNullOrWhiteSpace(Model.Label))
+{
+    <span class="@Html.Cn(PillVariants.Base, PillVariants.Theme(Model.Theme))">⦿ @Model.Label</span>
+}

@@ -1,43 +1,71 @@
 @model Aesys.Core.Components.HomePage.HeroBanner.HeroBannerViewModel
 
-<section class="relative isolate overflow-hidden bg-gray-900 text-white" data-component="hero-banner">
-    @if (Model.Background is not null)
-    {
-        <img src="@Model.Background.Url()" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-60" />
-    }
+<section-block bg-image="@(Model.Background?.Url())" data-component="hero-banner">
+    <div class="flex flex-col gap-16 md:gap-26">
+        <div class="flex max-w-2xl flex-col items-start gap-10">
+            @await Component.InvokeAsync("Pill", new { label = Model.Eyebrow, theme = "dark" })
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-40">
-        <div class="max-w-2xl">
             @if (!string.IsNullOrWhiteSpace(Model.Title))
             {
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-                    @Model.Title
-                </h1>
+                <h1 class="text-h1 tracking-tight [&_em]:not-italic [&_em]:text-accent-500">@Html.Raw(Model.Title)</h1>
             }
 
             @if (!string.IsNullOrWhiteSpace(Model.Text))
             {
-                <p class="mt-6 text-lg sm:text-xl text-gray-200 whitespace-pre-line">
-                    @Model.Text
-                </p>
+                <p class="max-w-2xl whitespace-pre-line text-lg">@Model.Text</p>
             }
 
-            @if (Model.Buttons?.Any() == true)
+            @if (Model.Features.Count > 0)
             {
-                <div class="mt-10 flex flex-wrap items-center gap-4">
-                    @foreach (var (button, index) in Model.Buttons.Select((b, i) => (b, i)))
+                <div class="flex flex-col gap-2">
+                    @foreach (var feature in Model.Features)
                     {
-                        @await Component.InvokeAsync("Button", new
-                        {
-                            label = button.Name,
-                            href = button.Url,
-                            target = button.Target,
-                            variant = index == 0 ? "secondary" : "outline",
-                            size = "lg",
-                        })
+                        <div class="flex items-center gap-3 text-base ">
+                            @if (feature.Icon is not null)
+                            {
+                                <img src="@feature.Icon.Url()" alt="" class="h-6 w-6 shrink-0 object-contain" />
+                            }
+                            <span>@feature.Text</span>
+                        </div>
                     }
                 </div>
             }
+
+            @if (Model.Button is not null)
+            {
+                @await Component.InvokeAsync("Button", new
+                {
+                    label = Model.Button.Name,
+                    href = Model.Button.Url,
+                    target = Model.Button.Target,
+                    variant = "primary",
+                    size = "md",
+                    arrow = false,
+                })
+            }
+
         </div>
+
+        @if (Model.Stats.Count > 0 || !string.IsNullOrWhiteSpace(Model.Footnote))
+        {
+            <div>
+                @if (Model.Stats.Count > 0)
+                {
+                    <div class="flex flex-col gap-8 sm:flex-row sm:gap-0 sm:divide-x sm:divide-white/40">
+                        @foreach (var stat in Model.Stats)
+                        {
+                            <div class="flex text-center items-center flex-col sm:px-8 sm:first:pl-0 sm:items-start">
+                                <span class="text-stat font-extrabold leading-none ">@stat.Value</span>
+                                <span class="mt-2 max-w-48 text-base ">@stat.Label</span>
+                            </div>
+                        }
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Footnote))
+                {
+                    <p class="mt-8 text-footnote text-white/80">@Model.Footnote</p>
+                }
+            </div>
+        }
     </div>
-</section>
+</section-block>

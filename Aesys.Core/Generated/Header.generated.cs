@@ -22,10 +22,10 @@ namespace Aesys.Core.Models
 	/// <summary>Header</summary>
 	public partial interface IHeader : IPublishedContent
 	{
-		/// <summary>Logo</summary>
+		/// <summary>Button</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		global::Umbraco.Cms.Core.Models.MediaWithCrops HeaderLogo { get; }
+		global::Umbraco.Cms.Core.Models.Link Button { get; }
 	}
 
 	/// <summary>Header</summary>
@@ -60,16 +60,16 @@ namespace Aesys.Core.Models
 		// properties
 
 		///<summary>
-		/// Logo
+		/// Button: Header call-to-action, e.g. "Zakažite konsultacije".
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("headerLogo")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops HeaderLogo => GetHeaderLogo(this, _publishedValueFallback);
+		[ImplementPropertyType("button")]
+		public virtual global::Umbraco.Cms.Core.Models.Link Button => GetButton(this, _publishedValueFallback);
 
-		/// <summary>Static getter for Logo</summary>
+		/// <summary>Static getter for Button</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static global::Umbraco.Cms.Core.Models.MediaWithCrops GetHeaderLogo(IHeader that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(publishedValueFallback, "headerLogo");
+		public static global::Umbraco.Cms.Core.Models.Link GetButton(IHeader that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.Link>(publishedValueFallback, "button");
 	}
 }

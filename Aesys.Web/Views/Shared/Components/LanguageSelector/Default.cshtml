@@ -1,0 +1,20 @@
+@model Aesys.Core.Compositions.LanguageSelector.LanguageSelectorViewModel
+
+@if (Model.Languages.Count > 0)
+{
+    <div class="flex items-center gap-3" data-component="language-selector">
+        @foreach (var lang in Model.Languages.Where(l => l.IsCurrent).DefaultIfEmpty(Model.Languages[0]))
+        {
+            @if (lang is not null)
+            {
+                @await Component.InvokeAsync("Button", new
+                {
+                    label = lang.Short,
+                    href = lang.Url,
+                    variant = "lang",
+                    size = "sm",
+                })
+            }
+        }
+    </div>
+}

@@ -50,7 +50,7 @@ Rules:
 
 ## Invoke signature: interface (Compositions) vs model (Components/Shared) vs primitives (Pure UI)
 
-- **Compositions** (`Aesys.Core/Compositions/<Name>/`) — `Invoke` takes the generated **interface** (`IHeader`, `IFooter`). This lets any page that composes the mixin pass itself in. See [HeaderViewComponent.cs](../../../Aesys.Core/Compositions/Header/HeaderViewComponent.cs).
+- **Compositions** (`Aesys.Core/Compositions/<Name>/`) — `Invoke` takes the generated **interface** (`IHeader`, `IFooter`). This lets any page that composes the mixin pass itself in. See [HeaderViewComponent.cs](../../../Aesys.Core/Compositions/Header/HeaderViewComponent.cs). **Caveat — the interface is generated lazily:** ModelsBuilder only emits `I<Name>` once another doctype actually composes the mixin. A brand-new composition with no consumer yet has **no** `I<Name>`, so `Invoke(I<Name> source)` fails to compile (`CS0246`). Until a consumer exists, either take the concrete `Models.<Name>` temporarily, or author the consumer first and regenerate — then switch to the interface. (Consumers that are element blocks force the composition to `IsElement=true`; see [usync-author](../usync-author/SKILL.md) `## IsElement and compositions`.)
 - **Page-scoped Components** (`Aesys.Core/Components/<Page>/<Name>/`, `IsElement=true`) — `Invoke` takes the generated **class** (`Models.HeroBanner`). Elements aren't shared; the concrete type is fine.
 - **Shared blocks** (`Aesys.Core/Shared/<Name>/`, `IsElement=true`) — same as page-scoped Components: `Invoke` takes the generated class via `Models.<Name>`.
 - **Pure UI** (`Aesys.Core/Components/UI/<Name>/`) — `Invoke` takes **plain primitives** passed by the caller (e.g. `Invoke(string label, string href = "", string variant = "primary", string size = "md")`). No `source` parameter, no `Models.X` reference, no generated model exists. See [ButtonViewComponent.cs](../../../Aesys.Core/Components/UI/Button/ButtonViewComponent.cs) for the canonical example.
@@ -113,6 +113,24 @@ Not every doctype needs one:
 - **Pages** rendered via their template (`Views/<Alias>/<Alias>.cshtml`) — no VC needed unless the page is also embedded as a fragment elsewhere.
 - **Settings-only compositions** (e.g. `GlobalSettings`) that hold properties but have no render output of their own — the consumer reads `source.SomeProperty` directly in its template/VM.
 - **DataTypes, MediaTypes, MemberTypes, Templates** — these are not DocumentTypes; no render layer applies.
+- **Wrappers that need to accept Razor children** — a ViewComponent **cannot** take a Razor child body (`Component.InvokeAsync` has no child slot). Use a **Tag Helper** instead. The canonical case is section chrome: see below.
+
+## Section chrome — use the `<section-block>` tag helper, not a ViewComponent
+
+Section chrome (the outer `<section>` + optional full-bleed background image + scrim, or a plain light section + gray bottom border, plus the inner `wrapper` container) is rendered by the [SectionTagHelper](../../../Aesys.Web/TagHelpers/SectionTagHelper.cs), **not** a ViewComponent — because only a tag helper can wrap arbitrary Razor children.
+
+In a block/page partial, wrap the content:
+
+```cshtml
+<section-block bg-image="@(Model.Background?.Url())" data-component="hero-banner">
+    @* ...arbitrary Razor children, other Component.InvokeAsync calls, etc... *@
+</section-block>
+```
+
+- `bg-image` set → dark full-bleed surface + image + scrim. Empty → plain light section + gray bottom border (`SectionVariants.WithImage` vs `Plain`).
+- `class` is TwMerge'd onto the chrome; any other attribute (`id`, `data-component`, `aria-*`) passes through. `data-component` defaults to `"section"` only if you don't set one.
+- The tag helper owns the **first-block header offset** (reads/clears `HttpContext.Items["IsFirstComponent"]`), so don't also call `Html.HeaderOffset()` on a `<section-block>`.
+- The `background` field itself comes from the `Section` composition mixin — a block gains it by composing `section`. Canonical consumers: [HeroBanner](../../../Aesys.Web/Views/Shared/Components/HeroBanner/Default.cshtml), [TextWithImage](../../../Aesys.Web/Views/Shared/Components/TextWithImage/Default.cshtml).
 
 ## When to invoke this skill
 

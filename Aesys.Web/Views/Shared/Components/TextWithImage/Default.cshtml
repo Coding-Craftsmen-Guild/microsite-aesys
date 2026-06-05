@@ -1,0 +1,25 @@
+@model Aesys.Core.Shared.TextWithImage.TextWithImageViewModel
+
+@{
+    var hasImage = Model.Image is not null;
+    var theme = Model.Background is not null ? "dark" : "light";
+    var introClass = hasImage ? "flex-1 basis-0 min-w-[20rem]" : "w-full";
+}
+
+<section-block bg-image="@(Model.Background?.Url())" data-component="text-with-image">
+    <div class="flex flex-wrap items-center gap-12 md:gap-25">
+        @await Component.InvokeAsync("IntroText", new
+        {
+            source = Model.Intro,
+            theme,
+            className = introClass,
+        })
+
+        @if (hasImage)
+        {
+            <div class="flex-1 basis-0 min-w-[20rem]">
+                <img src="@Model.Image.Url()" alt="" class="h-auto w-full rounded-xl object-cover" />
+            </div>
+        }
+    </div>
+</section-block>

@@ -20,7 +20,7 @@ namespace Aesys.Core.Models
 {
 	/// <summary>Hero Banner</summary>
 	[PublishedModel("heroBanner")]
-	public partial class HeroBanner : PublishedElementModel
+	public partial class HeroBanner : PublishedElementModel, ISection
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -50,20 +50,44 @@ namespace Aesys.Core.Models
 		// properties
 
 		///<summary>
-		/// Background
+		/// Button: Primary call-to-action link.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("background")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops Background => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "background");
+		[ImplementPropertyType("button")]
+		public virtual global::Umbraco.Cms.Core.Models.Link Button => this.Value<global::Umbraco.Cms.Core.Models.Link>(_publishedValueFallback, "button");
 
 		///<summary>
-		/// Buttons
+		/// Eyebrow: Small label above the title, e.g. "BESS Implementacija u Srbiji i regionu".
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("buttons")]
-		public virtual global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link> Buttons => this.Value<global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link>>(_publishedValueFallback, "buttons");
+		[ImplementPropertyType("eyebrow")]
+		public virtual string Eyebrow => this.Value<string>(_publishedValueFallback, "eyebrow");
+
+		///<summary>
+		/// Features: Icon + text feature items shown under the hero.
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("features")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Features => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "features");
+
+		///<summary>
+		/// Footnote: Small print under the stats, e.g. "*Procene zavise od profila potrošnje".
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footnote")]
+		public virtual string Footnote => this.Value<string>(_publishedValueFallback, "footnote");
+
+		///<summary>
+		/// Stats: Value + label stat items shown as a divided row.
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("stats")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Stats => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "stats");
 
 		///<summary>
 		/// Text
@@ -74,11 +98,19 @@ namespace Aesys.Core.Models
 		public virtual string Text => this.Value<string>(_publishedValueFallback, "text");
 
 		///<summary>
-		/// Title
+		/// Title: Wrap the accented word(s) in {em}{/em} to render them in the brand green.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("title")]
 		public virtual string Title => this.Value<string>(_publishedValueFallback, "title");
+
+		///<summary>
+		/// Background: Optional full-bleed background image. Leave empty for a light section with a gray bottom border.
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("background")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops Background => global::Aesys.Core.Models.Section.GetBackground(this, _publishedValueFallback);
 	}
 }

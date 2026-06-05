@@ -58,12 +58,36 @@ namespace Aesys.Core.Models
 		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Components => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "components");
 
 		///<summary>
-		/// Logo
+		/// Address: Address block under the tagline. One line per row, e.g. "Applied Energy Systems doo" / "Novi Sad, Srbija".
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("footerLogo")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops FooterLogo => global::Aesys.Core.Models.Footer.GetFooterLogo(this, _publishedValueFallback);
+		[ImplementPropertyType("address")]
+		public virtual string Address => global::Aesys.Core.Models.Footer.GetAddress(this, _publishedValueFallback);
+
+		///<summary>
+		/// Columns: Link columns, e.g. STRANICE / KONTAKT / BRZI LINKOVI.
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("columns")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Columns => global::Aesys.Core.Models.Footer.GetColumns(this, _publishedValueFallback);
+
+		///<summary>
+		/// Tagline: Bold line under the logo, e.g. "Pametna energija, za pametnu industriju."
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("tagline")]
+		public virtual string Tagline => global::Aesys.Core.Models.Footer.GetTagline(this, _publishedValueFallback);
+
+		///<summary>
+		/// Logo: White logo used in both the header and footer.
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("logo")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops Logo => global::Aesys.Core.Models.GlobalSettings.GetLogo(this, _publishedValueFallback);
 
 		///<summary>
 		/// Site Name
@@ -74,11 +98,11 @@ namespace Aesys.Core.Models
 		public virtual string SiteName => global::Aesys.Core.Models.GlobalSettings.GetSiteName(this, _publishedValueFallback);
 
 		///<summary>
-		/// Logo
+		/// Button: Header call-to-action, e.g. "Zakažite konsultacije".
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("headerLogo")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops HeaderLogo => global::Aesys.Core.Models.Header.GetHeaderLogo(this, _publishedValueFallback);
+		[ImplementPropertyType("button")]
+		public virtual global::Umbraco.Cms.Core.Models.Link Button => global::Aesys.Core.Models.Header.GetButton(this, _publishedValueFallback);
 	}
 }
