@@ -1,17 +1,11 @@
 using Aesys.Core.Extensions;
 using Aesys.Web.TagHelpers;
-using Microsoft.AspNetCore.Mvc.Razor;
 using OpenIddict.Server.AspNetCore;
 using TailwindMerge.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.CreateUmbracoBuilder().AddBackOffice().AddWebsite().AddComposers().RegisterCore().Build();
-
-builder.Services.Configure<RazorViewEngineOptions>(o =>
-{
-    o.ViewLocationExpanders.Add(new Aesys.Web.ViewLocations.DoctypeFolderViewLocationExpander());
-});
 
 builder.Services.AddSingleton<ViteManifest>();
 builder.Services.AddTailwindMerge();

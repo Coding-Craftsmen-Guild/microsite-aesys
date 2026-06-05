@@ -1,0 +1,38 @@
+@model Aesys.Core.Components.HomePage.Solutions.SolutionsViewModel
+@using Aesys.Core.Components.HomePage.Solutions
+
+@{
+    var theme = Model.Background is not null ? "dark" : "light";
+    var hasOverlay = Model.Overlay is not null;
+}
+
+<section-block bg-image="@(Model.Background?.Url())" data-component="solutions">
+    <div class="flex flex-col items-center gap-12 md:flex-row md:flex-wrap md:items-center md:gap-25">
+        <div class="relative isolate w-full md:flex-1 md:basis-0 md:min-w-[20rem]">
+            @if (hasOverlay)
+            {
+                <img src="@Model.Overlay.Url()" alt="" class="pointer-events-none absolute inset-0 -z-10 h-full w-full rounded-xl object-contain" />
+            }
+
+            @await Component.InvokeAsync("IntroText", new
+            {
+                source = Model.Intro,
+                theme,
+                className = "items-center text-center md:items-start md:text-left",
+            })
+        </div>
+
+        @if (Model.Items.Count > 0)
+        {
+            <ul class="flex w-full flex-col items-center gap-6 md:w-auto md:flex-1 md:basis-0 md:min-w-[20rem] md:items-stretch">
+                @foreach (var item in Model.Items)
+                {
+                    <li class="flex flex-col items-center gap-3 text-center md:flex-row md:gap-6 md:text-left">
+                        <span class="@Html.Cn(SolutionsVariants.Chip, SolutionsVariants.ChipFill(item.Index))">@item.Numeral</span>
+                        <span class="@(theme == "dark" ? "text-white" : "text-aesys-800") text-lg">@item.Text</span>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</section-block>

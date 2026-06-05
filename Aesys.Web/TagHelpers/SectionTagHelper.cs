@@ -64,7 +64,12 @@ public sealed class SectionTagHelper(TwMerge twMerge) : TagHelper
             html.AppendHtml($"<div class=\"{SectionVariants.Scrim}\"></div>");
         }
 
-        html.AppendHtml($"<div class=\"{SectionVariants.Inner}\">");
+        // The plain (no-image) section's separating hairline goes on the inner
+        // wrapper so it aligns to the content gutters, not the full-bleed edge.
+        var inner = hasImage
+            ? SectionVariants.Inner
+            : twMerge.Merge(SectionVariants.Inner, SectionVariants.InnerBorder);
+        html.AppendHtml($"<div class=\"{inner}\">");
         html.AppendHtml(children);
         html.AppendHtml("</div>");
     }
