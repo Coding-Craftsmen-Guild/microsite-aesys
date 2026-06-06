@@ -1,0 +1,43 @@
+@model Aesys.Core.Components.HomePage.Cards.CardsViewModel
+@using Aesys.Core.Components.HomePage.Cards
+
+@{
+    var theme = Model.Background is not null ? "dark" : "light";
+}
+
+<section-block bg-image="@(Model.Background?.Url())" data-component="cards">
+    <div class="flex flex-col gap-12 md:gap-16">
+        @await Component.InvokeAsync("IntroText", new { source = Model.Intro, theme })
+
+        @if (Model.Items.Count > 0)
+        {
+            <ul class="@CardsVariants.Columns(Model.PerRow)">
+                @foreach (var item in Model.Items)
+                {
+                    <li class="@Html.Cn(CardsVariants.Card, CardsVariants.CardFill(theme))">
+                        <span class="@Html.Cn(CardsVariants.Circle, CardsVariants.CircleFill(theme))">
+                            @if (item.Icon is not null)
+                            {
+                                <img src="@item.Icon.Url()" alt="" class="size-7 object-contain" />
+                            }
+                            else if (item.Number is not null)
+                            {
+                                @item.Number
+                            }
+                        </span>
+
+                        @if (!string.IsNullOrWhiteSpace(item.Title))
+                        {
+                            <h3 class="text-h4 font-bold">@item.Title</h3>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(item.Text))
+                        {
+                            <p class="mt-3 whitespace-pre-line text-base">@item.Text</p>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</section-block>
