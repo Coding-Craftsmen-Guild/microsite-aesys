@@ -26,6 +26,11 @@ namespace Aesys.Core.Models
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		global::Umbraco.Cms.Core.Models.MediaWithCrops Background { get; }
+
+		/// <summary>Background Color</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		string BackgroundColor { get; }
 	}
 
 	/// <summary>Section</summary>
@@ -60,7 +65,7 @@ namespace Aesys.Core.Models
 		// properties
 
 		///<summary>
-		/// Background: Optional full-bleed background image. Leave empty for a light section with a gray bottom border.
+		/// Background: Optional full-bleed background image. Takes precedence over Background Color. Leave both empty for a light section with a gray bottom border.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
@@ -71,5 +76,18 @@ namespace Aesys.Core.Models
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		public static global::Umbraco.Cms.Core.Models.MediaWithCrops GetBackground(ISection that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(publishedValueFallback, "background");
+
+		///<summary>
+		/// Background Color: Surface colour for this section. None inherits the page (transparent). Navy is the dark brand surface (light text). Light is the off-white surface. Ignored when a Background image is set (the image always renders the dark band).
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("backgroundColor")]
+		public virtual string BackgroundColor => GetBackgroundColor(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Background Color</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static string GetBackgroundColor(ISection that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "backgroundColor");
 	}
 }

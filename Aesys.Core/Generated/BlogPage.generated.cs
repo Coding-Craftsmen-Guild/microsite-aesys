@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Aesys.Core.Models
 {
-	/// <summary>Solutions</summary>
-	[PublishedModel("solutions")]
-	public partial class Solutions : PublishedElementModel, IIntroText
+	/// <summary>Blog Page</summary>
+	[PublishedModel("blogPage")]
+	public partial class BlogPage : Page
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		public new const string ModelTypeAlias = "solutions";
+		public new const string ModelTypeAlias = "blogPage";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
@@ -34,14 +34,14 @@ namespace Aesys.Core.Models
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<Solutions, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<BlogPage, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public Solutions(IPublishedElement content, IPublishedValueFallback publishedValueFallback)
+		public BlogPage(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,67 +50,58 @@ namespace Aesys.Core.Models
 		// properties
 
 		///<summary>
-		/// Items: One line per solution. Each becomes a numbered card (I, II, III, IV...) with the text beside it.
+		/// Article Date: Publication date shown in the banner.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("items")]
-		public virtual global::System.Collections.Generic.IEnumerable<string> Items => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "items");
+		[ImplementPropertyType("articleDate")]
+		public virtual global::System.DateTime ArticleDate => this.Value<global::System.DateTime>(_publishedValueFallback, "articleDate");
 
 		///<summary>
-		/// Overlay: Optional image layered behind the intro text on the left half (distinct from the full-bleed section Background).
+		/// Author: Author name shown in the banner.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("overlay")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops Overlay => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "overlay");
+		[ImplementPropertyType("author")]
+		public virtual string Author => this.Value<string>(_publishedValueFallback, "author");
 
 		///<summary>
-		/// Button: Optional call-to-action link.
+		/// Components: Additional blocks rendered below the article body.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("button")]
-		public virtual global::Umbraco.Cms.Core.Models.Link Button => global::Aesys.Core.Models.IntroText.GetButton(this, _publishedValueFallback);
+		[ImplementPropertyType("components")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Components => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "components");
 
 		///<summary>
-		/// Eyebrow: Small label above the title, rendered as a pill.
+		/// Content: The article body.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("eyebrow")]
-		public virtual string Eyebrow => global::Aesys.Core.Models.IntroText.GetEyebrow(this, _publishedValueFallback);
+		[ImplementPropertyType("content")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString Content => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "content");
 
 		///<summary>
-		/// Text: Body copy. Plain richtext.
+		/// Preview Image: Lead image shown in the banner and as the teaser image in listings.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("text")]
-		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString Text => global::Aesys.Core.Models.IntroText.GetText(this, _publishedValueFallback);
+		[ImplementPropertyType("previewImage")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops PreviewImage => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "previewImage");
 
 		///<summary>
-		/// Title: Wrap the accented word(s) in {em}{/em} to render them in the brand green.
+		/// Preview Text: Short teaser/excerpt shown in listings.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("title")]
-		public virtual string Title => global::Aesys.Core.Models.IntroText.GetTitle(this, _publishedValueFallback);
+		[ImplementPropertyType("previewText")]
+		public virtual string PreviewText => this.Value<string>(_publishedValueFallback, "previewText");
 
 		///<summary>
-		/// Background: Optional full-bleed background image. Takes precedence over Background Color. Leave both empty for a light section with a gray bottom border.
+		/// Tags: Topic tags, rendered as pills in the banner.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("background")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops Background => global::Aesys.Core.Models.Section.GetBackground(this, _publishedValueFallback);
-
-		///<summary>
-		/// Background Color: Surface colour for this section. None inherits the page (transparent). Navy is the dark brand surface (light text). Light is the off-white surface. Ignored when a Background image is set (the image always renders the dark band).
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("backgroundColor")]
-		public virtual string BackgroundColor => global::Aesys.Core.Models.Section.GetBackgroundColor(this, _publishedValueFallback);
+		[ImplementPropertyType("tags")]
+		public virtual global::System.Collections.Generic.IEnumerable<string> Tags => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "tags");
 	}
 }

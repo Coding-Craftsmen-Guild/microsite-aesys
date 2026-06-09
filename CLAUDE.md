@@ -71,7 +71,7 @@ Client-side build is Vite-driven, owned entirely by [Aesys.Web/](Aesys.Web/). Ou
 ### Authoring conventions
 
 - Razor classes: `class="@Html.Cn(HeaderVariants.Base, isOpen ? "bg-aesys-100" : "")"` — `Cn` calls `TwMerge.Merge` so conflicting classes resolve correctly (`px-4 px-6` → `px-6`).
-- Variants: define `public static class XxxVariants` next to the ViewComponent ([HeaderVariants.cs](Aesys.Core/Compositions/Header/HeaderVariants.cs) is the canonical example).
+- Variants: a `public static class XxxVariants` next to the ViewComponent is **optional** — reach for it only when a component has real variant logic (theme/size/state branches reused across markup), as [HeaderVariants.cs](Aesys.Core/Compositions/Header/HeaderVariants.cs) and [ButtonVariants.cs](Aesys.Core/Components/UI/Button/ButtonVariants.cs) do. When the markup just needs static classes, write them inline in the `.cshtml` (Tailwind scans `.cshtml` too) — don't add a Variants file for its own sake.
 - Component scripts: `defineComponent('[data-component="xxx"]', el => { ... })` from `@/lib/component`. Razor opts in by adding `data-component="xxx"` to the root element. The `__inited` guard is idempotent — safe for Umbraco backoffice DOM swaps.
 - Path aliases: `@/...` → `Aesys.Web/Client/`, `@views/...` → `Aesys.Web/Views/`.
 - New design tokens go in [Aesys.Web/Client/tokens/tokens.scss](Aesys.Web/Client/tokens/tokens.scss) via Tailwind v4's `@theme` directive (`--color-*`, `--font-*`, `--radius-*`). SCSS passes `@theme` through untouched, so Tailwind still reads it.

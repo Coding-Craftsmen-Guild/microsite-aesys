@@ -9,6 +9,7 @@ public sealed record CardItemViewModel(MediaWithCrops Icon, int? Number, string 
 public sealed record CardsViewModel(
     IIntroText Intro,
     MediaWithCrops Background,
+    string BackgroundColor,
     int PerRow,
     IReadOnlyList<CardItemViewModel> Items
 );
@@ -35,6 +36,7 @@ public sealed class CardsViewComponent : ViewComponent
         var vm = new CardsViewModel(
             Intro: source,
             Background: source.Background,
+            BackgroundColor: source.BackgroundColor,
             PerRow: ParsePerRow(source.PerRow),
             Items: items
         );

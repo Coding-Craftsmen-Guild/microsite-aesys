@@ -26,4 +26,28 @@ public static class SectionVariants
     // overlay (-z-10) for text legibility.
     public const string BgImage = "absolute inset-0 -z-20 h-full w-full object-cover";
     public const string Scrim = "absolute inset-0 -z-10 bg-scrim";
+
+    // Surface colour for an image-less section, driven by the Section's
+    // Background Color dropdown (None/Navy/Light). Navy is the dark brand
+    // surface with light text; Light is the off-white surface; None inherits
+    // the page (transparent). TwMerge'd onto Plain, so the colour wins over the
+    // base while the positioning/isolation classes survive.
+    public static string Surface(string bgColor) =>
+        bgColor switch
+        {
+            "Navy" => "bg-aesys-800 text-white",
+            "Light" => "bg-surface-light",
+            _ => string.Empty,
+        };
+
+    // Background Color implies the text theme passed to IntroText et al.:
+    // an image band or a Navy surface reads as "dark"; everything else "light".
+    public static string Theme(string bgColor, bool hasImage) =>
+        hasImage || bgColor == "Navy" ? "dark" : "light";
+
+    // The separating hairline only makes sense on a plain transparent section.
+    // Once the section carries a surface colour (Navy/Light) the colour change
+    // is the separator, so suppress the border.
+    public static bool HasInnerBorder(string bgColor, bool hasImage) =>
+        !hasImage && string.IsNullOrEmpty(Surface(bgColor));
 }

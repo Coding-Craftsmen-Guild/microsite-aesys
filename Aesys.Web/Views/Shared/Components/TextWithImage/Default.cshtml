@@ -1,13 +1,17 @@
 @model Aesys.Core.Shared.TextWithImage.TextWithImageViewModel
+@using Aesys.Core.Components.UI.Section
 
 @{
     var hasImage = Model.Image is not null;
-    var theme = Model.Background is not null ? "dark" : "light";
+    var theme = SectionVariants.Theme(Model.BackgroundColor, Model.Background is not null);
     var introClass = hasImage ? "flex-1 basis-0 min-w-[20rem]" : "w-full";
+    // Source order keeps the intro first (reads first on mobile / for AT); on a
+    // "Left" image the row is visually reversed so the image sits on the left.
+    var rowDirection = Model.ImagePosition == "Left" ? "md:flex-row-reverse" : "";
 }
 
-<section-block bg-image="@(Model.Background?.Url())" data-component="text-with-image">
-    <div class="flex flex-wrap items-center gap-12 md:gap-25">
+<section-block bg-image="@(Model.Background?.Url())" bg-color="@Model.BackgroundColor" data-component="text-with-image">
+    <div class="@Html.Cn("flex flex-wrap items-center gap-12 md:gap-25", rowDirection)">
         @await Component.InvokeAsync("IntroText", new
         {
             source = Model.Intro,

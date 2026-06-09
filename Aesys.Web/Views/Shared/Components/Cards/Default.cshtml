@@ -1,11 +1,11 @@
 @model Aesys.Core.Components.HomePage.Cards.CardsViewModel
 @using Aesys.Core.Components.HomePage.Cards
-
+@using Aesys.Core.Components.UI.Section
 @{
-    var theme = Model.Background is not null ? "dark" : "light";
+    var theme = SectionVariants.Theme(Model.BackgroundColor, Model.Background is not null);
 }
 
-<section-block bg-image="@(Model.Background?.Url())" data-component="cards">
+<section-block bg-image="@(Model.Background?.Url())" bg-color="@Model.BackgroundColor" data-component="cards">
     <div class="flex flex-col gap-12 md:gap-16">
         @await Component.InvokeAsync("IntroText", new { source = Model.Intro, theme })
 

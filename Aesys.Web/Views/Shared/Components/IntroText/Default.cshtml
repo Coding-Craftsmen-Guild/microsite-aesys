@@ -18,7 +18,7 @@
 
     @if (hasText)
     {
-        <div class="@Html.Cn("max-w-2xl text-lg [&_a]:underline [&_a]:text-accent-500 [&_p]:mt-4 [&_p:first-child]:mt-0 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-5 [&_strong]:font-bold", IntroTextVariants.Text(Model.Theme))">@Html.Raw(Model.Text)</div>
+        <div class="@Html.Cn("prose-links max-w-2xl text-lg [&_p]:mt-4 [&_p:first-child]:mt-0 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-5 [&_strong]:font-bold", IntroTextVariants.Text(Model.Theme))">@Html.Raw(Model.Text)</div>
     }
 
     @if (Model.Button is not null)

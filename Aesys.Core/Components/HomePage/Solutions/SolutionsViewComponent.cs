@@ -10,6 +10,7 @@ public sealed record SolutionsViewModel(
     IIntroText Intro,
     MediaWithCrops Overlay,
     MediaWithCrops Background,
+    string BackgroundColor,
     IReadOnlyList<SolutionItemViewModel> Items
 );
 
@@ -28,6 +29,7 @@ public sealed class SolutionsViewComponent : ViewComponent
             Intro: source,
             Overlay: source.Overlay,
             Background: source.Background,
+            BackgroundColor: source.BackgroundColor,
             Items: items
         );
 

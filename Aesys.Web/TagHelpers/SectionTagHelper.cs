@@ -22,6 +22,11 @@ public sealed class SectionTagHelper(TwMerge twMerge) : TagHelper
     [HtmlAttributeName("bg-image")]
     public string BgImage { get; set; }
 
+    // Surface colour when there's no image: "None" | "Navy" | "Light"
+    // (the Section Background Color dropdown). Ignored when bg-image is set.
+    [HtmlAttributeName("bg-color")]
+    public string BgColor { get; set; }
+
     // Opt out of the auto header-offset (e.g. when this section is never the
     // first block on a page). Defaults to participating in the offset handshake.
     [HtmlAttributeName("header-offset")]
@@ -46,10 +51,13 @@ public sealed class SectionTagHelper(TwMerge twMerge) : TagHelper
 
         var hasImage = !string.IsNullOrWhiteSpace(BgImage);
 
-        // With an image: dark full-bleed chrome. Without: a plain light section
-        // with a gray bottom border. `class` written on <section-block> is folded
-        // in via TwMerge so per-instance overrides resolve conflicts.
-        var chrome = hasImage ? SectionVariants.WithImage : SectionVariants.Plain;
+        // With an image: dark full-bleed chrome. Without: a plain section,
+        // optionally tinted by the Background Color (Navy/Light) surface. `class`
+        // written on <section-block> is folded in via TwMerge so per-instance
+        // overrides resolve conflicts.
+        var chrome = hasImage
+            ? SectionVariants.WithImage
+            : twMerge.Merge(SectionVariants.Plain, SectionVariants.Surface(BgColor));
         var extra = output.Attributes["class"]?.Value?.ToString() ?? string.Empty;
         var merged = twMerge.Merge(chrome, OffsetClass(), extra) ?? string.Empty;
         output.Attributes.SetAttribute("class", merged);
@@ -64,11 +72,13 @@ public sealed class SectionTagHelper(TwMerge twMerge) : TagHelper
             html.AppendHtml($"<div class=\"{SectionVariants.Scrim}\"></div>");
         }
 
-        // The plain (no-image) section's separating hairline goes on the inner
-        // wrapper so it aligns to the content gutters, not the full-bleed edge.
-        var inner = hasImage
-            ? SectionVariants.Inner
-            : twMerge.Merge(SectionVariants.Inner, SectionVariants.InnerBorder);
+        // The plain (no-image, no-surface) section's separating hairline goes on
+        // the inner wrapper so it aligns to the content gutters, not the
+        // full-bleed edge. A tinted surface (Navy/Light) is its own separator,
+        // so the hairline is suppressed there.
+        var inner = SectionVariants.HasInnerBorder(BgColor, hasImage)
+            ? twMerge.Merge(SectionVariants.Inner, SectionVariants.InnerBorder)
+            : SectionVariants.Inner;
         html.AppendHtml($"<div class=\"{inner}\">");
         html.AppendHtml(children);
         html.AppendHtml("</div>");

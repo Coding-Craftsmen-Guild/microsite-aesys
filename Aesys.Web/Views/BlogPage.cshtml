@@ -1,0 +1,80 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlogPage>
+@using Umbraco.Extensions
+
+@{
+    var tags = Model.Tags ?? Enumerable.Empty<string>();
+    var image = Model.PreviewImage;
+    var hasImage = image is not null;
+    var hasDate = Model.ArticleDate != default(DateTime);
+    var hasMeta = hasDate || !string.IsNullOrWhiteSpace(Model.Author);
+
+    // The banner is the first block on the page, so it owns the header offset
+    // (read-and-cleared by <section-block>). The body section opts out.
+    Context.Items["IsFirstComponent"] = true;
+}
+
+@* ── Banner: TextWithImage-style 50/50 row on navy ───────────────────────── *@
+<section-block bg-color="Navy" class="[&>.wrapper]:border-b [&>.wrapper]:border-white/15 [&>.wrapper]:pb-8 md:[&>.wrapper]:pb-10" data-component="blog-banner">
+    <div class="flex flex-wrap items-center gap-12 md:gap-25">
+        <div class="flex flex-1 basis-0 min-w-[20rem] flex-col items-start gap-6">
+            @if (tags.Any())
+            {
+                <div class="flex flex-wrap gap-2">
+                    @foreach (var tag in tags)
+                    {
+                        @await Component.InvokeAsync("Pill", new { label = tag, theme = "dark" })
+                    }
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.Title))
+            {
+                <h1 class="text-h1 tracking-tight text-white">@Model.Title</h1>
+            }
+
+            @if (hasMeta)
+            {
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-base text-white/80">
+                    @if (hasDate)
+                    {
+                        <time datetime="@Model.ArticleDate.ToString("yyyy-MM-dd")">@Model.ArticleDate.ToString("MMMM d, yyyy")</time>
+                    }
+                    @if (hasDate && !string.IsNullOrWhiteSpace(Model.Author))
+                    {
+                        <span aria-hidden="true">·</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Author))
+                    {
+                        <span>@Model.Author</span>
+                    }
+                </div>
+            }
+        </div>
+
+        @if (hasImage)
+        {
+            <div class="flex-1 basis-0 min-w-[20rem]">
+                <img src="@image.Url()" alt="" class="h-auto w-full rounded-xl object-cover" />
+            </div>
+        }
+    </div>
+</section-block>
+
+@* ── Body: richtext on navy ──────────────────────────────────────────────── *@
+@if (Model.Content is not null && !string.IsNullOrWhiteSpace(Model.Content.ToString()))
+{
+    <section-block bg-color="Navy" header-offset="false" class="[&>.wrapper]:pt-8 md:[&>.wrapper]:pt-10" data-component="blog-content">
+        <div class="prose-links prose-blog max-w-3xl text-white/90 [&_a]:text-accent-400 [&_h2]:text-h2 [&_h2]:mt-12 [&_h2]:mb-4 [&_h2]:text-white [&_h3]:text-xl [&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-white [&_p]:mt-4 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mt-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-bold [&_img]:rounded-xl [&_img]:my-6 [&>*:first-child]:mt-0">
+            @Html.Raw(Model.Content)
+        </div>
+    </section-block>
+}
+
+@* ── Bottom blocks (each renders its own full-bleed section) ──────────────── *@
+@if (Model.Components?.Any() == true)
+{
+    foreach (var block in Model.Components)
+    {
+        @await Component.InvokeAsync(block.Content.ContentType.Alias.ToFirstUpper(), new { source = block.Content })
+    }
+}

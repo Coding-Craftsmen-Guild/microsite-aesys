@@ -14,3 +14,12 @@
 @utility grid-cards {
   @apply grid gap-5;
 }
+
+/* .prose-links — the default hyperlink affordance for content/richtext areas:
+   brand green, underlined. Apply on a container so descendant <a>s pick it up
+   (chrome like buttons/nav lives outside content and is unaffected). */
+@utility prose-links {
+  & a {
+    @apply text-accent-500 underline;
+  }
+}

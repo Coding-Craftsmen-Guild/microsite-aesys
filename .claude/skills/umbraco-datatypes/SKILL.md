@@ -26,12 +26,29 @@ This is the inverse of DocumentTypes. Per [appsettings.json](../../../Aesys.Web/
 - **Dev**: `ExportOnSave: "Settings"` — same effect for DataTypes (Settings handlers include `DataTypeHandler`).
 - `DataTypes/` is **tracked in git** (unlike `ContentTypes/`). It IS the source of truth.
 
-**Authoring workflow:**
+**Authoring workflow (two paths):**
+
+**Backoffice (preferred for complex editors):**
 1. Open the backoffice → Settings → Data Types → create/edit.
 2. uSync auto-exports to [Aesys.Web/uSync/v17/DataTypes/](../../../Aesys.Web/uSync/v17/DataTypes/).
 3. Commit the new/changed `.config` alongside whatever doctype change consumes it.
 
-Do **not** hand-author DataType `.config` XML. Always go through the backoffice. uSync's GUID generation, editor schema, and config JSON shape are easy to get subtly wrong, and the round-trip via backoffice gives a working file every time.
+**Hand-authoring (OK for simple option-set editors):** You *may* hand-write a DataType `.config` when it's a straightforward flexible dropdown / radio / checkbox list whose only config is a fixed item list. Model it **exactly** on an existing tracked file with the same `EditorAlias` — [PerRow.config](../../../Aesys.Web/uSync/v17/DataTypes/PerRow.config) is the canonical flexible-dropdown-with-items shape (`"multiple": false` + a `"items": [...]` string array). Steps:
+1. Run the GUID-uniqueness check (below) for the new `Key`.
+2. Copy the structure of the model file; keep `EditorAlias` + `EditorUIAlias` identical; change only `Key`, `Alias`, `Name`, and the `items` list.
+3. Commit alongside the consuming doctype. On next boot uSync imports it like any other DataType.
+
+Canonical hand-authored examples in this repo: [BackgroundColor.config](../../../Aesys.Web/uSync/v17/DataTypes/BackgroundColor.config) (None/Navy/Light), [ImagePosition.config](../../../Aesys.Web/uSync/v17/DataTypes/ImagePosition.config) (Right/Left).
+
+**Still go through the backoffice** for editors with non-trivial config JSON — Block List/Grid (element-type whitelists, block schema), Image Cropper (crop definitions), Approved Color palettes, anything with nested structure. That JSON is painful to hand-write correctly; let the backoffice generate it.
+
+### GUID uniqueness for a hand-authored DataType
+
+Same mandatory rule as DocumentTypes. Generate a v4 GUID and prove it's globally unique before using it as `Key`:
+```bash
+grep -rl --include="*.config" "<candidate-guid>" Aesys.Core/ Aesys.Web/uSync/
+```
+Silent = safe. Any hit = discard and regenerate.
 
 ## Index — DataTypes currently tracked
 
@@ -65,8 +82,11 @@ Authoritative list lives in [Aesys.Web/uSync/v17/DataTypes/](../../../Aesys.Web/
 
 | File | EditorAlias | Use for |
 |---|---|---|
-| Dropdown.config | `Umbraco.DropDown.Flexible` | single-select from fixed list |
+| Dropdown.config | `Umbraco.DropDown.Flexible` | single-select from fixed list (no items baked in — generic) |
 | DropdownMultiple.config | `Umbraco.DropDown.Flexible` | multi-select from fixed list |
+| PerRow.config | `Umbraco.DropDown.Flexible` | single-select 2/3/4 (cards-per-row) — items baked in |
+| BackgroundColor.config | `Umbraco.DropDown.Flexible` | single-select None/Navy/Light (Section surface) — items baked in |
+| ImagePosition.config | `Umbraco.DropDown.Flexible` | single-select Right/Left (TextWithImage image side) — items baked in |
 | CheckboxList.config | `Umbraco.CheckBoxList` | multi-check from fixed list |
 | Radiobox.config | `Umbraco.RadioButtonList` | single-pick from fixed list |
 | ApprovedColor.config | `Umbraco.ColorPicker` | colour from approved palette |

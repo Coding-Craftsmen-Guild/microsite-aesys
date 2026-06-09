@@ -1,0 +1,13 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<StandardPage>
+
+@if (Model.Components?.Any() == true)
+{
+    @* Flag the first block for @Html.HeaderOffset() so it clears the fixed header.
+       The flag rides on HttpContext.Items (per-request) because ViewData does not
+       propagate into ViewComponents. The helper reads-and-clears it. *@
+    Context.Items["IsFirstComponent"] = true;
+    foreach (var block in Model.Components)
+    {
+        @await Component.InvokeAsync(block.Content.ContentType.Alias.ToFirstUpper(), new { source = block.Content })
+    }
+}

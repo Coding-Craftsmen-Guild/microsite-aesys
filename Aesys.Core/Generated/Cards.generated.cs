@@ -98,11 +98,19 @@ namespace Aesys.Core.Models
 		public virtual string Title => global::Aesys.Core.Models.IntroText.GetTitle(this, _publishedValueFallback);
 
 		///<summary>
-		/// Background: Optional full-bleed background image. Leave empty for a light section with a gray bottom border.
+		/// Background: Optional full-bleed background image. Takes precedence over Background Color. Leave both empty for a light section with a gray bottom border.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("background")]
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops Background => global::Aesys.Core.Models.Section.GetBackground(this, _publishedValueFallback);
+
+		///<summary>
+		/// Background Color: Surface colour for this section. None inherits the page (transparent). Navy is the dark brand surface (light text). Light is the off-white surface. Ignored when a Background image is set (the image always renders the dark band).
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("backgroundColor")]
+		public virtual string BackgroundColor => global::Aesys.Core.Models.Section.GetBackgroundColor(this, _publishedValueFallback);
 	}
 }

@@ -1,0 +1,21 @@
+@model Aesys.Core.Components.BlogLandingPage.BlogListingCards.BlogListingCardsViewModel
+@using Aesys.Core.Components.UI.Section
+@{
+    var theme = SectionVariants.Theme(Model.BackgroundColor, Model.Background is not null);
+}
+
+<section-block bg-image="@(Model.Background?.Url())" bg-color="@Model.BackgroundColor" data-component="blog-listing-cards">
+    <div class="flex flex-col gap-12 md:gap-16">
+        @await Component.InvokeAsync("IntroText", new { source = Model.Intro, theme })
+
+        @if (Model.Cards.Items.Count > 0)
+        {
+            @* The grid holds both the card <li>s and the Load-More button <li>
+               (a full-width centered slot). Load-More appends the next cards here
+               and swaps the trailing button, so one container owns it all. *@
+            <ul class="flex flex-wrap gap-6" data-grid>
+                <partial name="Components/BlogListingCards/_Cards" model="Model.Cards" />
+            </ul>
+        }
+    </div>
+</section-block>

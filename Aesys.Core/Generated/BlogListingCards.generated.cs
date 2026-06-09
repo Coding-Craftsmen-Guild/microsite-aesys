@@ -18,39 +18,14 @@ using Umbraco.Extensions;
 
 namespace Aesys.Core.Models
 {
-	// Mixin Content Type with alias "introText"
-	/// <summary>Intro Text</summary>
-	public partial interface IIntroText : IPublishedElement, ISection
-	{
-		/// <summary>Button</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		global::Umbraco.Cms.Core.Models.Link Button { get; }
-
-		/// <summary>Eyebrow</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		string Eyebrow { get; }
-
-		/// <summary>Text</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		global::Umbraco.Cms.Core.Strings.IHtmlEncodedString Text { get; }
-
-		/// <summary>Title</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		string Title { get; }
-	}
-
-	/// <summary>Intro Text</summary>
-	[PublishedModel("introText")]
-	public partial class IntroText : PublishedElementModel, IIntroText
+	/// <summary>Blog Listing Cards</summary>
+	[PublishedModel("blogListingCards")]
+	public partial class BlogListingCards : PublishedElementModel, IIntroText
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		public new const string ModelTypeAlias = "introText";
+		public new const string ModelTypeAlias = "blogListingCards";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
@@ -59,14 +34,14 @@ namespace Aesys.Core.Models
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<IntroText, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<BlogListingCards, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public IntroText(IPublishedElement content, IPublishedValueFallback publishedValueFallback)
+		public BlogListingCards(IPublishedElement content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -75,17 +50,19 @@ namespace Aesys.Core.Models
 		// properties
 
 		///<summary>
+		/// Max Items: Page size: how many cards to show initially and to add per "Load More" click. Defaults to 3 when 0/empty.
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[ImplementPropertyType("maxItems")]
+		public virtual int MaxItems => this.Value<int>(_publishedValueFallback, "maxItems");
+
+		///<summary>
 		/// Button: Optional call-to-action link.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("button")]
-		public virtual global::Umbraco.Cms.Core.Models.Link Button => GetButton(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Button</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static global::Umbraco.Cms.Core.Models.Link GetButton(IIntroText that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.Link>(publishedValueFallback, "button");
+		public virtual global::Umbraco.Cms.Core.Models.Link Button => global::Aesys.Core.Models.IntroText.GetButton(this, _publishedValueFallback);
 
 		///<summary>
 		/// Eyebrow: Small label above the title, rendered as a pill.
@@ -93,12 +70,7 @@ namespace Aesys.Core.Models
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("eyebrow")]
-		public virtual string Eyebrow => GetEyebrow(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Eyebrow</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static string GetEyebrow(IIntroText that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "eyebrow");
+		public virtual string Eyebrow => global::Aesys.Core.Models.IntroText.GetEyebrow(this, _publishedValueFallback);
 
 		///<summary>
 		/// Text: Body copy. Plain richtext.
@@ -106,12 +78,7 @@ namespace Aesys.Core.Models
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("text")]
-		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString Text => GetText(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Text</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static global::Umbraco.Cms.Core.Strings.IHtmlEncodedString GetText(IIntroText that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(publishedValueFallback, "text");
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString Text => global::Aesys.Core.Models.IntroText.GetText(this, _publishedValueFallback);
 
 		///<summary>
 		/// Title: Wrap the accented word(s) in {em}{/em} to render them in the brand green.
@@ -119,12 +86,7 @@ namespace Aesys.Core.Models
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("title")]
-		public virtual string Title => GetTitle(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Title</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
-		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static string GetTitle(IIntroText that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "title");
+		public virtual string Title => global::Aesys.Core.Models.IntroText.GetTitle(this, _publishedValueFallback);
 
 		///<summary>
 		/// Background: Optional full-bleed background image. Takes precedence over Background Color. Leave both empty for a light section with a gray bottom border.

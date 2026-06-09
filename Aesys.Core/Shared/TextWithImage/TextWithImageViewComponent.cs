@@ -7,7 +7,9 @@ namespace Aesys.Core.Shared.TextWithImage;
 public sealed record TextWithImageViewModel(
     IIntroText Intro,
     MediaWithCrops Image,
-    MediaWithCrops Background
+    MediaWithCrops Background,
+    string BackgroundColor,
+    string ImagePosition
 );
 
 public sealed class TextWithImageViewComponent : ViewComponent
@@ -17,7 +19,9 @@ public sealed class TextWithImageViewComponent : ViewComponent
         var vm = new TextWithImageViewModel(
             Intro: source,
             Image: source.Image,
-            Background: source.Background
+            Background: source.Background,
+            BackgroundColor: source.BackgroundColor,
+            ImagePosition: source.ImagePosition
         );
 
         return View(vm);

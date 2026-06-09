@@ -1,12 +1,13 @@
 @model Aesys.Core.Components.HomePage.Solutions.SolutionsViewModel
 @using Aesys.Core.Components.HomePage.Solutions
+@using Aesys.Core.Components.UI.Section
 
 @{
-    var theme = Model.Background is not null ? "dark" : "light";
+    var theme = SectionVariants.Theme(Model.BackgroundColor, Model.Background is not null);
     var hasOverlay = Model.Overlay is not null;
 }
 
-<section-block bg-image="@(Model.Background?.Url())" data-component="solutions">
+<section-block bg-image="@(Model.Background?.Url())" bg-color="@Model.BackgroundColor" data-component="solutions">
     <div class="flex flex-col items-center gap-12 md:flex-row md:flex-wrap md:items-center md:gap-25">
         <div class="relative isolate w-full md:flex-1 md:basis-0 md:min-w-[20rem]">
             @if (hasOverlay)
