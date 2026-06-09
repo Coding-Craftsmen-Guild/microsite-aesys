@@ -1,0 +1,68 @@
+@model Aesys.Core.Shared.ContactForm.ContactFormSubmission
+@using Aesys.Core.Shared.ContactForm
+
+@{
+    // theme rides on the model (a hidden field), set on the initial render by
+    // Default.cshtml and normalized by the controller on re-render — so the form
+    // styles itself to the section surface without any ViewData side-channel.
+    var theme = string.IsNullOrWhiteSpace(Model.Theme) ? "light" : Model.Theme;
+    var hasSummary = !ViewData.ModelState.IsValid
+        && ViewData.ModelState[string.Empty]?.Errors.Count > 0;
+}
+
+@* Posts to the ContactForm surface controller. contact-form.ts intercepts the
+   submit, sends it via fetch, and swaps [data-contact-form]'s contents with the
+   response. Without JS this still works as a normal full-page POST (the surface
+   controller returns the partial; progressive enhancement is the JS swap). *@
+<form method="post"
+      action="@Url.Action("Submit", "ContactForm")"
+      data-contact-form-el
+      novalidate
+      class="flex flex-col gap-4">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Recipients" />
+    <input type="hidden" asp-for="Theme" />
+
+    @if (hasSummary)
+    {
+        <div class="@ContactFormVariants.Summary(theme)" role="alert">
+            <div asp-validation-summary="ModelOnly"></div>
+        </div>
+    }
+
+    <div class="flex flex-col gap-1">
+        <label asp-for="Name" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">Ime i prezime <span class="text-red-500">*</span></label>
+        <input asp-for="Name" autocomplete="name" class="@ContactFormVariants.Field(theme)" />
+        <span asp-validation-for="Name" class="@ContactFormVariants.FieldError"></span>
+    </div>
+
+    <div class="flex flex-col gap-1">
+        <label asp-for="Company" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">Kompanija</label>
+        <input asp-for="Company" autocomplete="organization" class="@ContactFormVariants.Field(theme)" />
+        <span asp-validation-for="Company" class="@ContactFormVariants.FieldError"></span>
+    </div>
+
+    <div class="flex flex-col gap-4 sm:flex-row">
+        <div class="flex flex-1 flex-col gap-1">
+            <label asp-for="Email" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">Email <span class="text-red-500">*</span></label>
+            <input asp-for="Email" type="email" autocomplete="email" class="@ContactFormVariants.Field(theme)" />
+            <span asp-validation-for="Email" class="@ContactFormVariants.FieldError"></span>
+        </div>
+
+        <div class="flex flex-1 flex-col gap-1">
+            <label asp-for="Phone" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">Telefon <span class="text-red-500">*</span></label>
+            <input asp-for="Phone" type="tel" autocomplete="tel" class="@ContactFormVariants.Field(theme)" />
+            <span asp-validation-for="Phone" class="@ContactFormVariants.FieldError"></span>
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+        <label asp-for="Message" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">Poruka <span class="text-red-500">*</span></label>
+        <textarea asp-for="Message" rows="5" class="@ContactFormVariants.Field(theme)"></textarea>
+        <span asp-validation-for="Message" class="@ContactFormVariants.FieldError"></span>
+    </div>
+
+    <button type="submit" class="@ContactFormVariants.Submit" data-submit>
+        <span data-submit-label>Pošalji</span>
+    </button>
+</form>

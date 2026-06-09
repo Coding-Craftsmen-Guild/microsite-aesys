@@ -1,5 +1,5 @@
-using Aesys.Core.Components.BlogLandingPage.BlogListingCards;
 using Aesys.Core.Notifications;
+using Aesys.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
 
@@ -15,6 +15,7 @@ public static class CoreRegistrationExtensions
         >();
 
         builder.Services.AddScoped<IBlogListingService, BlogListingService>();
+        builder.Services.AddScoped<IContactEmailService, ContactEmailService>();
 
         return builder;
     }

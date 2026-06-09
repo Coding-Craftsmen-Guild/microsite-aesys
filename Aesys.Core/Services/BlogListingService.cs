@@ -1,9 +1,10 @@
+using Aesys.Core.Components.BlogLandingPage.BlogListingCards;
 using Aesys.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
 
-namespace Aesys.Core.Components.BlogLandingPage.BlogListingCards;
+namespace Aesys.Core.Services;
 
 // Reads the Umbraco context to resolve the blog source for a Blog Listing Cards
 // block and pages it into card view models. Owns all the "which page am I on /

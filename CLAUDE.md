@@ -60,7 +60,7 @@ Client-side build is Vite-driven, owned entirely by [Aesys.Web/](Aesys.Web/). Ou
 - [Aesys.Web/Views/Shared/Components/{Name}/](Aesys.Web/Views/Shared/Components/Header/) — co-located per-component `*.ts` / `*.scss` next to `Default.cshtml`. **Just drop a file in; no registration.** Vite picks it up via `import.meta.glob('../Views/**/*.{ts,scss}', { eager: true })` in `main.ts`.
 - [Aesys.Web/TagHelpers/](Aesys.Web/TagHelpers/) — `<vite-asset>` tag helper + `ViteManifest` singleton
 - [Aesys.Web/Extensions/](Aesys.Web/Extensions/) — `@Html.Cn(...)` (backed by TailwindMerge.NET) for conflict-resolving class composition
-- `Aesys.Core/<bucket>/<Name>/<Name>Variants.cs` — cva-style variants helpers; class strings scanned by Tailwind via `@source "../../Aesys.Core/**/*.cs"`. Canonical examples: [HeaderVariants.cs](Aesys.Core/Compositions/Header/HeaderVariants.cs) for an Umbraco composition; [ButtonVariants.cs](Aesys.Core/Components/UI/Button/ButtonVariants.cs) for a pure-UI component.
+- `Aesys.Core/<bucket>/<Name>/<Name>Variants.cs` — **optional** cva-style variants helper; **only** when a component has actual reused variant logic (theme/size/state branches). Default to writing classes inline in the `.cshtml` (Tailwind scans `.cshtml` too). When a helper is warranted, its class strings are scanned by Tailwind via `@source "../../Aesys.Core/**/*.cs"`. Canonical examples of components that earn one: [HeaderVariants.cs](Aesys.Core/Compositions/Header/HeaderVariants.cs) (composition) and [ButtonVariants.cs](Aesys.Core/Components/UI/Button/ButtonVariants.cs) (pure-UI). See `### Authoring conventions` for the rule.
 
 ### Dev loop
 
@@ -71,7 +71,7 @@ Client-side build is Vite-driven, owned entirely by [Aesys.Web/](Aesys.Web/). Ou
 ### Authoring conventions
 
 - Razor classes: `class="@Html.Cn(HeaderVariants.Base, isOpen ? "bg-aesys-100" : "")"` — `Cn` calls `TwMerge.Merge` so conflicting classes resolve correctly (`px-4 px-6` → `px-6`).
-- Variants: a `public static class XxxVariants` next to the ViewComponent is **optional** — reach for it only when a component has real variant logic (theme/size/state branches reused across markup), as [HeaderVariants.cs](Aesys.Core/Compositions/Header/HeaderVariants.cs) and [ButtonVariants.cs](Aesys.Core/Components/UI/Button/ButtonVariants.cs) do. When the markup just needs static classes, write them inline in the `.cshtml` (Tailwind scans `.cshtml` too) — don't add a Variants file for its own sake.
+- Variants: **inline classes in the `.cshtml` are the default.** Tailwind scans `.cshtml`, so static (even theme-conditional one-off) classes belong there — `class="@(theme == "dark" ? "bg-aesys-800 text-white" : "bg-surface-light")"` is fine inline. Only extract a `public static class XxxVariants` next to the ViewComponent when there is **actual** reused variant logic worth a helper: the same theme/size/state branch is needed in multiple places, or the branch table is large enough that inlining hurts readability — as [HeaderVariants.cs](Aesys.Core/Compositions/Header/HeaderVariants.cs) and [ButtonVariants.cs](Aesys.Core/Components/UI/Button/ButtonVariants.cs) do. **Never add a Variants file just because a component exists** — no boilerplate Variants class for its own sake.
 - Component scripts: `defineComponent('[data-component="xxx"]', el => { ... })` from `@/lib/component`. Razor opts in by adding `data-component="xxx"` to the root element. The `__inited` guard is idempotent — safe for Umbraco backoffice DOM swaps.
 - Path aliases: `@/...` → `Aesys.Web/Client/`, `@views/...` → `Aesys.Web/Views/`.
 - New design tokens go in [Aesys.Web/Client/tokens/tokens.scss](Aesys.Web/Client/tokens/tokens.scss) via Tailwind v4's `@theme` directive (`--color-*`, `--font-*`, `--radius-*`). SCSS passes `@theme` through untouched, so Tailwind still reads it.
@@ -149,6 +149,12 @@ The pre-14 AngularJS backoffice rendered block-list/grid labels with `{{property
 - **Templates are created in code, not uSync.** uSync's `TemplateHandler` is disabled (both appsettings). On startup [EnsurePageTemplatesHandler](Aesys.Core/Notifications/EnsurePageTemplatesHandler.cs) (registered via `RegisterCore` in [Aesys.Core/Extensions/](Aesys.Core/Extensions/)) iterates doc types and, for each one that has a `Views/{Alias}.cshtml`, creates a matching Template from that view and sets it as the doc type's default/allowed template. It's idempotent (no churn).
 - **To add a page template:** drop `Aesys.Web/Views/{Alias}.cshtml` (Alias = PascalCase of the doc type alias, e.g. `homePage` → `HomePage.cshtml`) with **no `Layout` line**, and don't add anything under uSync `Templates/`. The checker wires it on next boot.
 - All Core service/notification registrations live in the single `RegisterCore(this IUmbracoBuilder)` extension, called from [Program.cs](Aesys.Web/Program.cs).
+
+### Services — DI classes live in `Aesys.Core/Services/` and are named `*Service`
+
+- **Any class registered for DI** (anything you `builder.Services.Add*<...>()` in `RegisterCore`) is a **service**: put it in `Aesys.Core/Services/<Name>Service.cs` with namespace `Aesys.Core.Services`, name the class `<Name>Service`, and give it an `I<Name>Service` interface registered against it. Examples: [ContactEmailService.cs](Aesys.Core/Services/ContactEmailService.cs), [BlogListingService.cs](Aesys.Core/Services/BlogListingService.cs).
+- **Name by what it does, not by mechanism** — `ContactEmailService`, not `ContactMailer`/`ContactHelper`/`ContactManager`. The `*Service` suffix is the signal "this is DI-registered, lives under `Services/`."
+- **Don't co-locate services with components.** They're cross-cutting; a component folder is for that component's `.config`/ViewComponent/Variants/partial, not its services. A service may still reference a component's view models (e.g. `BlogListingService` returns `BlogCardsViewModel`) — that's a one-way `using`, not co-location.
 
 ### Component taxonomy
 
