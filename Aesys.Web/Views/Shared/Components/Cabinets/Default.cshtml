@@ -1,0 +1,51 @@
+@model Aesys.Core.Shared.Cabinets.CabinetsViewModel
+@using Aesys.Core.Components.UI.Section
+
+@{
+    var theme = SectionVariants.Theme(Model.BackgroundColor, Model.Background is not null);
+}
+
+<section-block bg-image="@(Model.Background?.Url())" bg-color="@Model.BackgroundColor" data-component="cabinets">
+    <div class="flex flex-col gap-12 md:gap-16">
+        @await Component.InvokeAsync("IntroText", new { source = Model.Intro, theme })
+
+        @if (Model.Items.Count > 0)
+        {
+            <ul class="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                @foreach (var item in Model.Items)
+                {
+                    <li class="@Html.Cn("flex flex-col overflow-hidden rounded-xl", theme == "dark" ? "bg-aesys-800/60 text-white" : "bg-surface-light")">
+                        @if (item.Image is not null)
+                        {
+                            <img src="@item.Image.Url()" alt="" class="h-auto w-full object-cover" />
+                        }
+
+                        <div class="flex flex-1 flex-col gap-3 p-6">
+                            @if (!string.IsNullOrWhiteSpace(item.Title))
+                            {
+                                <h3 class="text-h4 font-bold">@item.Title</h3>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(item.Description))
+                            {
+                                <p class="whitespace-pre-line text-base">@item.Description</p>
+                            }
+
+                            @if (item.Link is not null)
+                            {
+                                <div class="mt-auto flex justify-end pt-2">
+                                    <a href="@item.Link.Url" target="@item.Link.Target" class="@Html.Cn("inline-flex items-center gap-1 text-sm font-semibold underline-offset-2 hover:underline", theme == "dark" ? "text-white" : "text-aesys-800")">
+                                        @(string.IsNullOrWhiteSpace(item.Link.Name) ? "Learn More" : item.Link.Name)
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M6.22 4.22a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06l-3.25 3.25a.75.75 0 0 1-1.06-1.06L8.94 8 6.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</section-block>
