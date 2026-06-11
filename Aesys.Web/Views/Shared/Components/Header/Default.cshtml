@@ -21,7 +21,7 @@
     <div class="hidden items-center gap-8 md:flex">
         @foreach (var item in Model.Items)
         {
-            <a href="@item.Url" class="@HeaderVariants.NavLink(item.IsActive)">@item.Label</a>
+            <partial name="Components/Header/_DesktopNavItem" model="item" />
         }
     </div>
 
@@ -54,7 +54,7 @@
     <div class="header-mobile-menu absolute inset-x-0 top-16 z-50 flex flex-col gap-4 border-b border-divider/20 bg-aesys-800 px-6 py-6 md:hidden">
         @foreach (var item in Model.Items)
         {
-            <a href="@item.Url" class="@HeaderVariants.NavLink(item.IsActive)">@item.Label</a>
+            <partial name="Components/Header/_MobileNavItem" model="item" />
         }
         @if (Model.Button is not null)
         {

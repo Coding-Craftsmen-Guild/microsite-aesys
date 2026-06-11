@@ -26,12 +26,7 @@ public sealed class CabinetsViewComponent : ViewComponent
             source
                 .Items?.Select(b => b.Content)
                 .OfType<Models.CabinetItem>()
-                .Select(c => new CabinetItemViewModel(
-                    c.Image,
-                    c.Title,
-                    c.Description,
-                    c.Link
-                ))
+                .Select(c => new CabinetItemViewModel(c.Image, c.Title, c.Description, c.Link))
                 .ToList()
             ?? [];
 

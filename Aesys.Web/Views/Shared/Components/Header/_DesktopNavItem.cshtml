@@ -1,0 +1,25 @@
+@using Aesys.Core.Compositions.Header
+@using Aesys.Core.Services
+@model NavItem
+
+@if (Model.Children.Count > 0)
+{
+    <div class="group relative">
+        <a href="@Model.Url" class="@Html.Cn(HeaderVariants.NavLink(Model.IsActive), "inline-flex items-center gap-1")">
+            @Model.Label
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+        </a>
+        <div class="invisible absolute left-0 top-full z-50 flex min-w-48 flex-col gap-1 rounded-md border border-divider/20 bg-aesys-800 p-2 opacity-0 shadow-lg transition-all duration-200 group-hover:visible group-hover:opacity-100">
+            @foreach (var child in Model.Children)
+            {
+                <a href="@child.Url" class="@Html.Cn(HeaderVariants.NavLink(child.IsActive), "whitespace-nowrap rounded-sm px-3 py-2 hover:bg-aesys-700")">@child.Label</a>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <a href="@Model.Url" class="@HeaderVariants.NavLink(Model.IsActive)">@Model.Label</a>
+}

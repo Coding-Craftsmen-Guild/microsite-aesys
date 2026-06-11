@@ -16,6 +16,7 @@ public static class CoreRegistrationExtensions
 
         builder.Services.AddScoped<IBlogListingService, BlogListingService>();
         builder.Services.AddScoped<IContactEmailService, ContactEmailService>();
+        builder.Services.AddScoped<INavigationService, NavigationService>();
 
         return builder;
     }

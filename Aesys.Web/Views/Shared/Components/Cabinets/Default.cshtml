@@ -14,7 +14,7 @@
             <ul class="grid grid-cols-1 gap-8 sm:grid-cols-2">
                 @foreach (var item in Model.Items)
                 {
-                    <li class="@Html.Cn("flex flex-col overflow-hidden rounded-xl", theme == "dark" ? "bg-aesys-800/60 text-white" : "bg-surface-light")">
+                    <li class="flex flex-col overflow-hidden rounded-xl border border-aesys-100 bg-surface-light text-aesys-800 shadow-lg">
                         @if (item.Image is not null)
                         {
                             <img src="@item.Image.Url()" alt="" class="h-auto w-full object-cover" />
@@ -33,14 +33,10 @@
 
                             @if (item.Link is not null)
                             {
-                                <div class="mt-auto flex justify-end pt-2">
-                                    <a href="@item.Link.Url" target="@item.Link.Target" class="@Html.Cn("inline-flex items-center gap-1 text-sm font-semibold underline-offset-2 hover:underline", theme == "dark" ? "text-white" : "text-aesys-800")">
-                                        @(string.IsNullOrWhiteSpace(item.Link.Name) ? "Learn More" : item.Link.Name)
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4" aria-hidden="true">
-                                            <path fill-rule="evenodd" d="M6.22 4.22a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06l-3.25 3.25a.75.75 0 0 1-1.06-1.06L8.94 8 6.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                        </svg>
-                                    </a>
-                                </div>
+                                <a href="@item.Link.Url" target="@item.Link.Target" class="mt-auto inline-flex items-center gap-2 self-end pt-5 font-medium text-accent-500">
+                                    <span class="underline">@(string.IsNullOrWhiteSpace(item.Link.Name) ? "Learn More" : item.Link.Name)</span>
+                                    <span aria-hidden="true">&#10148;</span>
+                                </a>
                             }
                         </div>
                     </li>
