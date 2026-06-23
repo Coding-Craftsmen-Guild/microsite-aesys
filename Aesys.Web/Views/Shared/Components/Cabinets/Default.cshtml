@@ -34,7 +34,7 @@
                             @if (item.Link is not null)
                             {
                                 <a href="@item.Link.Url" target="@item.Link.Target" class="mt-auto inline-flex items-center gap-2 self-end pt-5 font-medium text-accent-500">
-                                    <span class="underline">@(string.IsNullOrWhiteSpace(item.Link.Name) ? "Learn More" : item.Link.Name)</span>
+                                    <span class="underline">@(string.IsNullOrWhiteSpace(item.Link.Name) ? Html.Tr("Common.LearnMore") : item.Link.Name)</span>
                                     <span aria-hidden="true">&#10148;</span>
                                 </a>
                             }

@@ -39,8 +39,11 @@ defineComponent<HTMLElement>('[data-component="contact-form"]', (root) => {
     const button = form.querySelector<HTMLButtonElement>('[data-submit]');
     const label = form.querySelector<HTMLElement>('[data-submit-label]');
     const originalLabel = label?.textContent ?? '';
+    // The localized "Sending…" text is rendered server-side onto the button so the
+    // client doesn't hardcode a language (see _Form.cshtml data-submitting).
+    const submittingLabel = button?.getAttribute('data-submitting') ?? '';
     if (button) button.disabled = true;
-    if (label) label.textContent = 'Slanje…';
+    if (label) label.textContent = submittingLabel;
 
     try {
       const res = await fetch(form.action, {

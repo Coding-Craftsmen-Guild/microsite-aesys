@@ -72,7 +72,7 @@ run = "bash tools/clone-project.sh"
 run_windows = 'C:\PROGRA~1\Git\bin\bash.exe tools/clone-project.sh'
 
 [tasks."usync:bundle"]
-description = "Flat-copy all *.config under Aesys.Core/{Components,Compositions,Pages} into Aesys.Web/uSync/v17/ContentTypes/ so uSync's startup import can apply them."
+description = "Flat-copy *.config under Aesys.Core into uSync/v17/, routed by folder: files under a Dictionary/ folder go to Dictionary/, everything else to ContentTypes/, so uSync's startup import can apply them."
 run = "bash tools/usync-bundle.sh"
 run_windows = 'C:\PROGRA~1\Git\bin\bash.exe tools/usync-bundle.sh'
 

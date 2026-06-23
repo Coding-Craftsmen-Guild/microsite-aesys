@@ -31,38 +31,38 @@
     }
 
     <div class="flex flex-col gap-1">
-        <label asp-for="Name" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">Ime i prezime <span class="text-red-500">*</span></label>
+        <label asp-for="Name" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">@Html.T("ContactForm.NameLabel") <span class="text-red-500">*</span></label>
         <input asp-for="Name" autocomplete="name" class="@ContactFormVariants.Field(theme)" />
         <span asp-validation-for="Name" class="@ContactFormVariants.FieldError"></span>
     </div>
 
     <div class="flex flex-col gap-1">
-        <label asp-for="Company" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">Kompanija</label>
+        <label asp-for="Company" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">@Html.T("ContactForm.CompanyLabel")</label>
         <input asp-for="Company" autocomplete="organization" class="@ContactFormVariants.Field(theme)" />
         <span asp-validation-for="Company" class="@ContactFormVariants.FieldError"></span>
     </div>
 
     <div class="flex flex-col gap-4 sm:flex-row">
         <div class="flex flex-1 flex-col gap-1">
-            <label asp-for="Email" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">Email <span class="text-red-500">*</span></label>
+            <label asp-for="Email" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">@Html.T("ContactForm.EmailLabel") <span class="text-red-500">*</span></label>
             <input asp-for="Email" type="email" autocomplete="email" class="@ContactFormVariants.Field(theme)" />
             <span asp-validation-for="Email" class="@ContactFormVariants.FieldError"></span>
         </div>
 
         <div class="flex flex-1 flex-col gap-1">
-            <label asp-for="Phone" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">Telefon <span class="text-red-500">*</span></label>
+            <label asp-for="Phone" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">@Html.T("ContactForm.PhoneLabel") <span class="text-red-500">*</span></label>
             <input asp-for="Phone" type="tel" autocomplete="tel" class="@ContactFormVariants.Field(theme)" />
             <span asp-validation-for="Phone" class="@ContactFormVariants.FieldError"></span>
         </div>
     </div>
 
     <div class="flex flex-col gap-1">
-        <label asp-for="Message" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">Poruka <span class="text-red-500">*</span></label>
+        <label asp-for="Message" class="@Html.Cn("text-footnote font-medium", ContactFormVariants.Label(theme))">@Html.T("ContactForm.MessageLabel") <span class="text-red-500">*</span></label>
         <textarea asp-for="Message" rows="5" class="@ContactFormVariants.Field(theme)"></textarea>
         <span asp-validation-for="Message" class="@ContactFormVariants.FieldError"></span>
     </div>
 
-    <button type="submit" class="@ContactFormVariants.Submit" data-submit>
-        <span data-submit-label>Pošalji</span>
+    <button type="submit" class="@ContactFormVariants.Submit" data-submit data-submitting="@Html.T("ContactForm.Submitting")">
+        <span data-submit-label>@Html.T("ContactForm.Submit")</span>
     </button>
 </form>

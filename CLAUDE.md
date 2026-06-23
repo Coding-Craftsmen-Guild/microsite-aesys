@@ -194,7 +194,7 @@ Tracked vs gitignored in `Aesys.Web/uSync/v17/`:
 Code-first authoring:
 - Use the [usync-author skill](.claude/skills/usync-author/SKILL.md). It enforces a mandatory GUID-uniqueness check before assigning any `Key` to a new DocumentType or Dictionary entry.
 - Source files live under [Aesys.Core/](Aesys.Core/) organised as `{Components,Compositions,Shared,Pages}/<Name>/<name>.config` — see the [usync-author skill](.claude/skills/usync-author/SKILL.md) for the layout rules and `### Component taxonomy` above for which bucket to pick. Pure-UI components under `Components/UI/` have no `.config` and are out of scope for uSync.
-- `mise run usync:bundle` ([tools/usync-bundle.sh](tools/usync-bundle.sh)) wipes `Aesys.Web/uSync/v17/ContentTypes/` and flat-copies every `*.config` under `Aesys.Core/` into it (so source deletes propagate). Run after every doctype change. Dictionary bundling is not implemented yet — see `## Open questions`.
+- `mise run usync:bundle` ([tools/usync-bundle.sh](tools/usync-bundle.sh)) wipes both `Aesys.Web/uSync/v17/ContentTypes/` and `Aesys.Web/uSync/v17/Dictionary/` and flat-copies every `*.config` under `Aesys.Core/`, **routed by folder**: files under a `Dictionary/` folder go to `Dictionary/`, everything else to `ContentTypes/` (so source deletes propagate). Run after every doctype or dictionary change. See `## Localization (i18n)` and the [usync-author skill](.claude/skills/usync-author/SKILL.md)'s `## Dictionary authoring` for the dictionary XML schema and key convention.
 
 Prod capture volume: `docker-compose.yml` bind-mounts `./usync:/app/uSync`, so prod runtime captures persist on the host and are inspectable. The folder is gitignored as `/usync/`.
 
@@ -213,6 +213,19 @@ Prod capture volume: `docker-compose.yml` bind-mounts `./usync:/app/uSync`, so p
 - `Aesys.Web/node_modules/`, `Aesys.Web/wwwroot/dist/`, `**/.vite/` — Vite client build output (rebuilt in Docker `client` stage)
 - Secrets of any kind. There are no env-var files checked in; add them to `.mise.local.toml` (gitignored) if you need per-developer overrides.
 
-## Open questions
+## Localization (i18n)
 
-- **Dictionary i18n source layout.** Code-first per `## uSync`, but the `Aesys.Core/` subfolder convention and bundler mapping into `Aesys.Web/uSync/v17/Dictionary/` aren't decided. Resolve when the first real dictionary entry is needed. Extend [tools/usync-bundle.sh](tools/usync-bundle.sh) and the [usync-author skill](.claude/skills/usync-author/SKILL.md) at the same time.
+Site text that isn't editor-authored content (UI chrome, form labels, validation messages, the contact email) is localized via **Umbraco Dictionary items**, code-first like DocumentTypes. Languages live in `Aesys.Web/uSync/v17/Languages/` (`sr` default, `en-US` secondary).
+
+**Authoring (the write side).** Dictionary `.config` files live in a `Dictionary/` folder co-located with the owning component (e.g. `Aesys.Core/Shared/ContactForm/Dictionary/`, `Aesys.Core/Services/Dictionary/` for `Email.*`) plus a global `Aesys.Core/Dictionary/` for cross-cutting keys (`Common.*`, `Header.*`, `Footer.*`). The bundler routes by the `Dictionary/`-folder test. Keys are **dotted full paths** (`ContactForm.Submit`); the `<Parent>`/`Level` tree is backoffice-organizational only (lookups are by full ItemKey). Full schema, GUID-uniqueness, and the tree rules are in the [usync-author skill](.claude/skills/usync-author/SKILL.md)'s `## Dictionary authoring`.
+
+**Reading (the read side).** One dictionary-backed store, three entry points:
+- **`@Html.T("Key")`** (and `@Html.Tr("Key")` for string/attribute contexts) in Razor — [HtmlHelperLocalizationExtensions.cs](Aesys.Web/Extensions/HtmlHelperLocalizationExtensions.cs).
+- **`ILocalizer`** in C# (controllers, services) — [Aesys.Core/Localization/](Aesys.Core/Localization/). Inject it; `localizer["Key"]` returns the value (or the key on a miss).
+- **DataAnnotations** — `[Display(Name="Key")]` and `[Required(ErrorMessage="Key")]` etc. resolve from the dictionary automatically. This is wired in `RegisterCore` via `AddDataAnnotationsLocalization(o => o.DataAnnotationLocalizerProvider = (t, f) => f.Create(t))`, which routes every model's Display name and ErrorMessage through `DictionaryStringLocalizerFactory`. **Never set `ResourceType` on `[Display]`** — a null `ResourceType` is what routes it through the provider; setting it disables localization. Attributes carry **dictionary ItemKeys**, not literal text (attribute args must be compile-time constants, so the "static reference" is the key string).
+
+All three funnel through `DictionaryStringLocalizer` (over Umbraco's `ICultureDictionary`), so there's one culture axis (`CurrentUICulture`, set per front-end request by Umbraco) and one fallback (miss → the key, rendered visibly). These are framework-abstraction implementations, so they live in `Aesys.Core/Localization/`, **not** `Aesys.Core/Services/` (the `*Service` convention in `### Services` is for domain services).
+
+**Email culture caveat.** The contact email is built and sent server-side during the form POST (a surface controller, inside the Umbraco published route), so `CurrentUICulture` is the visitor's culture and `ILocalizer` resolves the email text correctly. If a send ever moves off the request thread (background/queue), pass the culture explicitly.
+
+**Adding a language.** Drop a language `.config` in `Languages/` and add one `<Translation Language="...">` line per dictionary item. No code change.

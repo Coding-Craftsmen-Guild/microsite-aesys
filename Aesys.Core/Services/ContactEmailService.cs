@@ -1,4 +1,5 @@
 using System.Text;
+using Aesys.Core.Localization;
 using Aesys.Core.Shared.ContactForm;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Mail;
@@ -22,6 +23,7 @@ public interface IContactEmailService
 
 public sealed class ContactEmailService(
     IEmailSender emailSender,
+    ILocalizer localizer,
     ILogger<ContactEmailService> logger
 ) : IContactEmailService
 {
@@ -45,7 +47,7 @@ public sealed class ContactEmailService(
             );
         }
 
-        var subject = $"Nova poruka sa sajta — {submission.Name}";
+        var subject = $"{localizer["Email.SubjectPrefix"]} {submission.Name}";
         var body = BuildBody(submission);
 
         // from = null: IEmailSender falls back to the configured From address.
@@ -86,17 +88,17 @@ public sealed class ContactEmailService(
                 )
                 .ToArray();
 
-    private static string BuildBody(ContactFormSubmission s)
+    private string BuildBody(ContactFormSubmission s)
     {
         var sb = new StringBuilder();
-        sb.Append("<h2>Nova poruka sa kontakt forme</h2>");
+        sb.Append($"<h2>{HtmlEncode(localizer["Email.Heading"])}</h2>");
         sb.Append("<table cellpadding=\"6\" style=\"border-collapse:collapse\">");
-        AppendRow(sb, "Ime i prezime", s.Name);
-        AppendRow(sb, "Kompanija", s.Company);
-        AppendRow(sb, "Email", s.Email);
-        AppendRow(sb, "Telefon", s.Phone);
+        AppendRow(sb, localizer["Email.NameLabel"], s.Name);
+        AppendRow(sb, localizer["Email.CompanyLabel"], s.Company);
+        AppendRow(sb, localizer["Email.EmailLabel"], s.Email);
+        AppendRow(sb, localizer["Email.PhoneLabel"], s.Phone);
         sb.Append("</table>");
-        sb.Append("<h3>Poruka</h3>");
+        sb.Append($"<h3>{HtmlEncode(localizer["Email.MessageHeading"])}</h3>");
         sb.Append($"<p>{HtmlEncode(s.Message).Replace("\n", "<br/>")}</p>");
         return sb.ToString();
     }

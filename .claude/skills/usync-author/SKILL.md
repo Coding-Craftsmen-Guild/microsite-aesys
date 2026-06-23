@@ -5,7 +5,7 @@ description: Author or modify code-first Umbraco DocumentTypes (ContentTypes) an
 
 # usync-author
 
-Code-first authoring for Umbraco DocumentTypes (and Dictionary, TBD). Read `## uSync` in [CLAUDE.md](../../../CLAUDE.md) first for the env split (dev = code-first import-on-startup, prod = full-capture) and the gitignore rules.
+Code-first authoring for Umbraco DocumentTypes and Dictionary items. Read `## uSync` in [CLAUDE.md](../../../CLAUDE.md) first for the env split (dev = code-first import-on-startup, prod = full-capture) and the gitignore rules. Dictionary mechanics live in `## Dictionary authoring` below.
 
 ## Source layout
 
@@ -130,6 +130,67 @@ A duplicate `Key` across uSync items causes silent overwrites on import. **Befor
 - **Don't reuse a GUID across items** (different types share the global namespace).
 - **Don't skip the check** even for "obviously new" items. The check is cheap; a silent overwrite isn't.
 
+## Dictionary authoring
+
+Code-first Umbraco Dictionary items (i18n) follow the same source→bundle→import flow as DocumentTypes, but with their own XML schema and folder routing. See `## Localization (i18n)` in [CLAUDE.md](../../../CLAUDE.md) for the read side (`ILocalizer`, `@Html.T`, DataAnnotations).
+
+### Source layout
+
+Dictionary `.config` files live in a `Dictionary/` folder, co-located with the component that owns the keys, plus a global folder for cross-cutting keys:
+
+```
+Aesys.Core/
+├── Dictionary/                       # global cross-cutting (Common.*, Header.*, Footer.*)
+├── Shared/ContactForm/Dictionary/    # co-located with the component
+└── Services/Dictionary/              # co-located with the reader (Email.* — ContactEmailService)
+```
+
+The bundler routes **by folder**: any `.config` under a `Dictionary/` folder goes to `Aesys.Web/uSync/v17/Dictionary/`; everything else is a DocumentType and goes to `ContentTypes/`. So the folder name is the routing key — never put a Dictionary `.config` outside a `Dictionary/` folder, and never put a DocumentType `.config` inside one.
+
+### Key convention — dotted full-path leaves + an organizational tree
+
+- **Leaf `Alias` (the ItemKey) is the full dotted path**: `ContactForm.Submit`, `Common.ReadMore`. Umbraco dictionary keys are one **global flat namespace** — lookups resolve by full ItemKey and ignore the tree — so a bare leaf (`Submit`) would collide globally. Dotted full-path leaves stay unambiguous and self-documenting.
+- The `<Parent>`/`Level` tree is **organizational only** (it groups items in the backoffice Dictionary section); it does not affect lookups.
+- **Filename** = ItemKey lowercased with dots kept: `ContactForm.Submit` → `contactform.submit.config`. Parent file = `<parent>.config` (`contactform.config`).
+
+### XML schema
+
+**Parent** (a container; Level 0, empty translations, empty `<Parent>`):
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Dictionary Key="<unique-guid>" Alias="ContactForm" Level="0">
+  <Info>
+    <Parent></Parent>
+  </Info>
+  <Translations />
+</Dictionary>
+```
+
+**Child** (Level 1; `<Parent>` is the parent's **ItemKey string**, NOT a GUID; one `<Translation>` per language, `Language` = the ISO code, value in CDATA):
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Dictionary Key="<unique-guid>" Alias="ContactForm.NameLabel" Level="1">
+  <Info>
+    <Parent>ContactForm</Parent>
+  </Info>
+  <Translations>
+    <Translation Language="sr"><![CDATA[Ime i prezime]]></Translation>
+    <Translation Language="en-US"><![CDATA[Full name]]></Translation>
+  </Translations>
+</Dictionary>
+```
+
+Rules:
+- The site languages are tracked in `Aesys.Web/uSync/v17/Languages/` (`sr` is default, `en-US` secondary). Use the language's **ISO code** in `Language=` (`sr`, `en-US`), matching the `<IsoCode>` in the language `.config`.
+- Files must be **UTF-8** (uSync can't parse UTF-16). Keep diacritics literal in the CDATA.
+- Adding a language later = drop a language `.config` + add one `<Translation>` line per item. No code change.
+- **GUID uniqueness applies to Dictionary `Key`s too**, parents included — follow the mandatory procedure below for every item.
+- `<Parent>` resolution: with `FailOnMissingParent: false` (appsettings) and flat, filename-sorted import, a `<parent>.config` sorts before its `<parent>.child.config`, so parents import first. A restart resolves any straggler.
+
+### Bundle
+
+`mise run usync:bundle` wipes **both** `ContentTypes/` and `Dictionary/` targets, then flat-copies each source `.config`, routed by the `Dictionary/`-folder test. Run it after any add/rename/delete/edit, then restart dev so uSync re-imports.
+
 ## Scope
 
 In scope:
@@ -137,6 +198,7 @@ In scope:
 - `Aesys.Core/Shared/**/*.config` — cross-page reusable element types
 - `Aesys.Core/Compositions/**/*.config` — site-wide mixins
 - `Aesys.Core/Pages/**/*.config` — page types
+- `Aesys.Core/**/Dictionary/**/*.config` — code-first Dictionary items (see `## Dictionary authoring`)
 
 **Out of scope**:
 - `Aesys.Core/Components/UI/**` — pure UI ViewComponents with no `.config`. Handled by [umbraco-viewcomponent](../umbraco-viewcomponent/SKILL.md) directly; orchestrated by [component-developer](../component-developer/SKILL.md).
@@ -149,7 +211,7 @@ In scope:
 - [umbraco-datatypes](../umbraco-datatypes/SKILL.md) — picking the `<Definition>` GUID for a property, when to reuse vs create.
 - [umbraco-blocks](../umbraco-blocks/SKILL.md) — Block List / Grid / single composition from IsElement doctypes.
 
-Dictionary i18n layout is still open — see `## Open questions` in [CLAUDE.md](../../../CLAUDE.md).
+Dictionary i18n layout is resolved — see `## Dictionary authoring` above and `## Localization (i18n)` in [CLAUDE.md](../../../CLAUDE.md).
 
 ## When to invoke this skill
 

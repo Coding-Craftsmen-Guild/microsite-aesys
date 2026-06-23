@@ -1,3 +1,4 @@
+using Aesys.Core.Localization;
 using Aesys.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,6 +32,7 @@ public sealed class ContactFormController(
     IProfilingLogger profilingLogger,
     IPublishedUrlProvider publishedUrlProvider,
     IContactEmailService contactEmail,
+    ILocalizer localizer,
     ILogger<ContactFormController> logger
 )
     : SurfaceController(
@@ -84,10 +86,7 @@ public sealed class ContactFormController(
     // visitor's input and shows the failure without losing what they typed.
     private IActionResult MailFailure(ContactFormSubmission model)
     {
-        ModelState.AddModelError(
-            string.Empty,
-            "Slanje poruke trenutno nije moguće. Molimo pokušajte ponovo kasnije."
-        );
+        ModelState.AddModelError(string.Empty, localizer["ContactForm.MailFailure"]);
         Response.StatusCode = UnprocessableEntityStatus;
         return PartialView("Components/ContactForm/_Form", model);
     }
