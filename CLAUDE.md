@@ -30,6 +30,7 @@ Specialised skills auto-load for Umbraco work. The model picks by description; t
 - Default DB is SQLite, configured in [appsettings.json](Aesys.Web/appsettings.json) via `umbracoDbDSN` + `|DataDirectory|`.
 - The DB file lives at `./data/Umbraco.sqlite.db` (host bind mount from both compose files). `./data/` is gitignored — never commit it.
 - Resetting the DB = stopping the stack and deleting `./data/Umbraco.sqlite.db*` (3 files: `.db`, `.db-shm`, `.db-wal`).
+- **NEVER drop, delete, reset, overwrite, or otherwise destroy the database without an explicit, in-the-moment instruction from the user to do exactly that.** The SQLite file holds real authored content (pages, media, dictionary entries) that is **not** reproducible from the code-first schema — uSync imports doctypes/datatypes, not content. The local dev DB lives at `Aesys.Web/umbraco/Data/Umbraco.sqlite.db` (non-Docker `mise run dev`); the Docker path is the `./data/` bind mount. Do not assume a "missing" DB — if you don't see it in one location, check the other before concluding it's a fresh install. Deleting it to "fix" a boot error, regenerate models, or get a clean slate is prohibited.
 - SQLite means single-instance only. If horizontal scaling becomes a requirement, switch the connection string to SQL Server / PostgreSQL before scaling `web`.
 
 ### First-boot install (dev only)
@@ -106,6 +107,8 @@ Docker prod build has a dedicated `client` stage (`node:22-alpine`) that runs `n
 - **ModelsBuilder-generated files (`Aesys.Core/Generated/*.generated.cs`) are off-limits**. Never rename, move, or hand-edit them. They're owned by the generator — overwritten on every regen (SourceCodeAuto runs on every doctype save in dev). They are tracked in git (no gitignore) so PRs show the model deltas. If a doctype rename breaks compile transiently, fix it by changing the source `.config` and waiting for MB to regen — don't shortcut by editing the generated file.
 
 ### New-model bootstrap ordering (IMPORTANT)
+
+> **STOP — order is not optional.** When you add or change a doctype/property that C# will consume, do **NOT** write or edit any C# that references the new/changed model member until the app has booted once and regenerated the model. The order is strictly: **(1) edit `.config` → (2) `mise run usync:bundle` → (3) BOOT the app (`mise run dev`) and wait for the regenerated `*.generated.cs` → (4) ONLY THEN write the model-consuming C#.** Writing the C# first breaks the build, which prevents the app from booting, which prevents the regen — a deadlock you then have to back out of (revert the C#, boot, restore it). "I'm already in the file, I'll just write it now" is the exact trap. If model-consuming C# already exists and blocks the build, move it aside (or `git stash`/revert it), boot to regen, then restore — see step 3 below.
 
 `ModelsMode` is `SourceCodeAuto` (dev): generated models in `Aesys.Core/Generated/` are written **by the running app**, not by `dotnet build`. So C# that references a *new or changed* model member (a new doctype's `Models.X`, a newly-added property like `HomePage.Socials`, a new element model) **cannot compile until the app has run once and regenerated the models**. Build-first fails with `CS0234`/`CS0246` — a chicken-and-egg.
 

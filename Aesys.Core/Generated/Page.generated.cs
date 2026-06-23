@@ -50,6 +50,13 @@ namespace Aesys.Core.Models
 		// properties
 
 		///<summary>
+		/// Hide Children From Navigation: Exclude this page's child pages from the main navigation (the page itself stays).
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]
+		[ImplementPropertyType("hideChildrenFromNavigation")]
+		public virtual bool HideChildrenFromNavigation => this.Value<bool>(_publishedValueFallback, "hideChildrenFromNavigation");
+
+		///<summary>
 		/// Hide From Navigation: Exclude this page from the main navigation.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "17.4.2+b87d519")]

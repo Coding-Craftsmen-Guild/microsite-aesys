@@ -46,7 +46,10 @@ public sealed class NavigationService(
         var current = CurrentPage();
 
         var items = new List<NavItem> { new(root.Name, root.Url(), current?.Id == root.Id, []) };
-        items.AddRange(BuildChildren(root.Key, current, includeGrandchildren: true));
+        if (!root.HideChildrenFromNavigation)
+        {
+            items.AddRange(BuildChildren(root.Key, current, includeGrandchildren: true));
+        }
         return items;
     }
 
@@ -72,9 +75,10 @@ public sealed class NavigationService(
             .Where(page => page.IsPublished() && !page.HideFromNavigation)
             .Select(page =>
             {
-                var children = includeGrandchildren
-                    ? BuildChildren(page.Key, current, includeGrandchildren: false)
-                    : [];
+                var children =
+                    includeGrandchildren && !page.HideChildrenFromNavigation
+                        ? BuildChildren(page.Key, current, includeGrandchildren: false)
+                        : [];
                 var isActive = current?.Id == page.Id || children.Any(c => c.IsActive);
                 return new NavItem(page.Name, page.Url(), isActive, children);
             })
