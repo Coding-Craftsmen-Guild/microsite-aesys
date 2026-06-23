@@ -1,0 +1,32 @@
+@model Aesys.Core.Shared.Map.MapViewModel
+@using Aesys.Core.Components.UI.Section
+
+@{
+    var hasMap = !string.IsNullOrWhiteSpace(Model.MapEmbed);
+    var theme = SectionVariants.Theme(Model.BackgroundColor, Model.Background is not null);
+    var introClass = hasMap ? "flex-1 basis-0 min-w-[20rem]" : "w-full";
+    // Source order keeps the intro first (reads first on mobile / for AT); on a
+    // "Left" map the row is visually reversed so the map sits on the left.
+    var rowDirection = Model.MapPosition == "Left" ? "md:flex-row-reverse" : "";
+}
+
+<section-block bg-image="@(Model.Background?.Url())" bg-color="@Model.BackgroundColor" data-component="map">
+    <div class="@Html.Cn("flex flex-wrap items-center gap-12 md:gap-25", rowDirection)">
+        @await Component.InvokeAsync("IntroText", new
+        {
+            source = Model.Intro,
+            theme,
+            className = introClass,
+        })
+
+        @if (hasMap)
+        {
+            @* Raw Google Maps embed. The wrapper's overflow-hidden + rounded-xl
+               clips the square-cornered iframe into the brand radius; map.scss
+               forces the iframe to fill the wrapper responsively. *@
+            <div class="map-embed flex-1 basis-0 min-w-[20rem] overflow-hidden rounded-xl">
+                @Html.Raw(Model.MapEmbed)
+            </div>
+        }
+    </div>
+</section-block>

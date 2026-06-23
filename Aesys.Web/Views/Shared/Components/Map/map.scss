@@ -1,0 +1,12 @@
+// A pasted Google Maps embed carries fixed width/height attributes and square
+// corners. The .map-embed wrapper supplies the rounded corners (via
+// overflow-hidden + rounded-xl in the markup); this reset makes the iframe fill
+// the wrapper responsively regardless of the attributes the editor pasted.
+.map-embed {
+  iframe {
+    display: block;
+    width: 100%;
+    min-height: 24rem; // ~384px — a sensible map height on desktop and mobile
+    border: 0;
+  }
+}
