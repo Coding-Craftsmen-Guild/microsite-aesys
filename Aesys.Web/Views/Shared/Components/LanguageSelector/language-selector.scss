@@ -1,0 +1,15 @@
+/* The language pill is a <summary>; strip the native disclosure triangle so the
+   ButtonVariants flex layout owns the box, and flip the chevron when open. */
+[data-component='language-selector'] {
+  summary {
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  &[open] .lang-chevron {
+    transform: rotate(180deg);
+  }
+}

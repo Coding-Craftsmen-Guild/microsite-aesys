@@ -492,7 +492,6 @@ Aesys.Web/wwwroot/dist/
 # In dev: populated by the bundler (planned), gitignored.
 # In prod: populated by runtime captures on the persistent volume (see docker-compose.yml), gitignored.
 Aesys.Web/uSync/v17/ContentTypes/
-Aesys.Web/uSync/v17/Dictionary/
 
 # Prod uSync runtime capture volume (host bind mount per docker-compose.yml).
 # Runtime artifact, snapshot manually for env replication.

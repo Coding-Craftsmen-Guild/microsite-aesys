@@ -56,6 +56,11 @@
         {
             <partial name="Components/Header/_MobileNavItem" model="item" />
         }
+
+        <div class="flex">
+            @await Component.InvokeAsync("LanguageSelector", new { languages = Model.Languages, align = "start" })
+        </div>
+
         @if (Model.Button is not null)
         {
             @await Component.InvokeAsync("Button", new
