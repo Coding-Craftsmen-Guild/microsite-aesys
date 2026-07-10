@@ -39,6 +39,11 @@ LICENSE
 **/dist/
 **/.vite/
 
+# Code-first uSync bundle output — regenerated inside the image by the `usync-bundle`
+# stage from Aesys.Core/, never copied from the (possibly stale) host working tree.
+Aesys.Web/uSync/v17/ContentTypes/
+Aesys.Web/uSync/v17/Dictionary/
+
 # Umbraco runtime artefacts that must never be baked into the image
 Aesys.Web/umbraco/Data/TEMP/
 Aesys.Web/umbraco/Data/CreatedPackages/

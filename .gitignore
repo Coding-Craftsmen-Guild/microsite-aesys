@@ -488,14 +488,11 @@ Aesys.Web/wwwroot/media/
 Aesys.Web/wwwroot/dist/
 **/.vite/
 
-# uSync: code-first artifacts (authored in source, bundled in by build).
-# In dev: populated by the bundler (planned), gitignored.
-# In prod: populated by runtime captures on the persistent volume (see docker-compose.yml), gitignored.
+# uSync code-first artifacts. Authored under Aesys.Core/ (source of truth), then
+# flattened into these folders by `mise run usync:bundle` in dev and by the Dockerfile
+# `usync-bundle` stage in the image. Generated output — gitignored in both folders.
 Aesys.Web/uSync/v17/ContentTypes/
-
-# Prod uSync runtime capture volume (host bind mount per docker-compose.yml).
-# Runtime artifact, snapshot manually for env replication.
-/usync/
+Aesys.Web/uSync/v17/Dictionary/
 
 ##
 ## Tooling (mise, .NET local tools)
