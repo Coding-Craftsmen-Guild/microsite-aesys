@@ -494,6 +494,14 @@ Aesys.Web/wwwroot/dist/
 Aesys.Web/uSync/v17/ContentTypes/
 Aesys.Web/uSync/v17/Dictionary/
 
+# uSync Content/Media/Domains captures. ContentHandler, MediaHandler and DomainHandler
+# are disabled in dev (see appsettings.Development.json) precisely so these never get
+# written — content, media and domain assignments live in the SQLite DB, not as files.
+# Ignored as a backstop in case they're ever re-enabled.
+Aesys.Web/uSync/v17/Content/
+Aesys.Web/uSync/v17/Media/
+Aesys.Web/uSync/v17/Domains/
+
 ##
 ## Tooling (mise, .NET local tools)
 ##
