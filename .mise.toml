@@ -32,6 +32,11 @@ description = "Run Umbraco without watch (prod-like, uses pre-built Vite bundle)
 run = "dotnet run --project Aesys.Web/Aesys.Web.csproj"
 depends = ["usync:bundle", "client:build"]
 
+[tasks.publish]
+description = "Publish the Release build of Aesys.Web into artifacts/publish (bundles uSync + client, restores NuGet first). Single source of truth for the Docker build stage."
+run = "dotnet publish Aesys.Web/Aesys.Web.csproj -c Release -o artifacts/publish --no-restore /p:UseAppHost=false"
+depends = ["usync:bundle", "client:build", "restore"]
+
 [tasks.format]
 description = "Format all code (C# via csharpier + TS/CSS/JSON via Prettier)."
 depends = ["client:format"]

@@ -6,6 +6,8 @@ services:
     image: 'aesys.web:latest'
     expose:
       - '8080'
+    # The Dockerfile deliberately sets no ASPNETCORE_ENVIRONMENT — this is the
+    # single source of truth for it locally; Coolify supplies it the same way in prod.
     environment:
       Umbraco__CMS__Global__LocalTempStorage: EnvironmentTemp
       ASPNETCORE_ENVIRONMENT: Production

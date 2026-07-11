@@ -3,6 +3,8 @@ services:
     build:
       target: dev
     image: aesys.web:dev
+    # The Dockerfile sets no ASPNETCORE_ENVIRONMENT — this is the single source of
+    # truth for it in local dev, mirroring docker-compose.yml's Production value.
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       DOTNET_USE_POLLING_FILE_WATCHER: "1"

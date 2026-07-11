@@ -30,6 +30,8 @@ LICENSE
 **/publish/
 **/[Dd]ebug/
 **/[Rr]elease/
+# `mise run publish` output — the build stage regenerates this itself
+artifacts/
 
 # Node (front-end tooling via Vite + Tailwind)
 **/node_modules/
@@ -59,7 +61,9 @@ Aesys.Web/appsettings-schema.*.json
 Aesys.Web/umbraco-package-schema.json
 
 # Tooling (host-only, never needed inside the image)
-.mise.toml
+# .mise.toml is NOT excluded — the build stage installs mise and runs `mise run`
+# tasks, so it needs the task definitions. .mise.local.toml stays excluded: it's a
+# gitignored per-developer override file and must never be baked into a shared image.
 .mise.local.toml
 .config/
 docker-compose*.yml
