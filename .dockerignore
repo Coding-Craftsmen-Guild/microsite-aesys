@@ -37,12 +37,12 @@ artifacts/
 **/node_modules/
 **/npm-debug.log
 **/yarn-error.log
-# Vite output is rebuilt inside the image by the `client` stage — never bake host artifacts in
+# Vite output is rebuilt inside the image by `mise run client:build` (build stage) — never bake host artifacts in
 **/dist/
 **/.vite/
 
-# Code-first uSync bundle output — regenerated inside the image by the `usync-bundle`
-# stage from Aesys.Core/, never copied from the (possibly stale) host working tree.
+# Code-first uSync bundle output — regenerated inside the image by `mise run usync:bundle`
+# (build stage) from Aesys.Core/, never copied from the (possibly stale) host working tree.
 Aesys.Web/uSync/v17/ContentTypes/
 Aesys.Web/uSync/v17/Dictionary/
 
