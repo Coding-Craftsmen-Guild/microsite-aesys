@@ -20,3 +20,9 @@ services:
       - umbraco-logs:/src/Aesys.Web/umbraco/Logs
       - umbraco-media:/src/Aesys.Web/wwwroot/media
     command: ["dotnet", "watch", "--non-interactive", "--project", "Aesys.Web/Aesys.Web.csproj", "run", "--no-launch-profile"]
+
+  # The backup sidecar is prod-only. Assigning it a profile nothing activates keeps a bare
+  # `docker compose up` from pulling the private GHCR image during local dev. Coolify reads
+  # docker-compose.yml directly and never merges this override, so it still runs in prod.
+  cloud-cli:
+    profiles: ["prod-only"]
