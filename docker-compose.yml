@@ -9,7 +9,7 @@ services:
     # The Dockerfile deliberately sets no ASPNETCORE_ENVIRONMENT — this is the
     # single source of truth for it locally; Coolify supplies it the same way in prod.
     environment:
-      Umbraco__CMS__Global__LocalTempStorage: EnvironmentTemp
+      Umbraco__CMS__Hosting__LocalTempStorageLocation: EnvironmentTemp
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: 'http://+:8080'
     volumes:
