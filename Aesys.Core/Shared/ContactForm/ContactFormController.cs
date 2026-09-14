@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Logging;
+using Umbraco.Cms.Core.Models.Blocks;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Web.Website.Controllers;
+using Umbraco.Extensions;
 
 namespace Aesys.Core.Shared.ContactForm;
 
@@ -68,7 +70,8 @@ public sealed class ContactFormController(
                 return MailFailure(model);
             }
 
-            await contactEmail.SendAsync(model);
+            // Resolved from the posted page's own block, never from the request body.
+            await contactEmail.SendAsync(model, ResolveRecipients(model.PageKey));
         }
         catch (Exception ex)
         {
@@ -80,6 +83,29 @@ public sealed class ContactFormController(
             "Components/ContactForm/_Success",
             new ContactSuccessViewModel(model.Theme)
         );
+    }
+
+    // The destination address, read from the Contact Form block on the page the form was
+    // rendered on. Read by property alias rather than switching on the page type so a new
+    // page type does not silently stop resolving recipients.
+    //
+    // A forged PageKey can only ever name another published page of this site, so the
+    // worst it can do is pick a different address the site owner configured themselves.
+    private string ResolveRecipients(Guid pageKey)
+    {
+        if (pageKey == Guid.Empty)
+        {
+            return null;
+        }
+
+        var page = UmbracoContext.Content?.GetById(pageKey);
+
+        return page
+            ?.Value<BlockListModel>("components")
+            ?.Select(block => block.Content)
+            .OfType<Models.ContactForm>()
+            .Select(form => form.Recipients)
+            .FirstOrDefault(recipients => !string.IsNullOrWhiteSpace(recipients));
     }
 
     // Re-render the form with a form-level error and a 422 so the client keeps the

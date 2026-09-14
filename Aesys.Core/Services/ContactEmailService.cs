@@ -18,7 +18,14 @@ public interface IContactEmailService
     // instead of a swallowed exception.
     bool CanSend { get; }
 
-    Task SendAsync(ContactFormSubmission submission, CancellationToken cancellationToken = default);
+    // `recipients` is passed in rather than read off the submission: the submission is
+    // request-bound, so a destination taken from it is attacker-controlled. The caller
+    // resolves it from content.
+    Task SendAsync(
+        ContactFormSubmission submission,
+        string recipients,
+        CancellationToken cancellationToken = default
+    );
 }
 
 public sealed class ContactEmailService(
@@ -33,10 +40,11 @@ public sealed class ContactEmailService(
 
     public async Task SendAsync(
         ContactFormSubmission submission,
+        string recipientList,
         CancellationToken cancellationToken = default
     )
     {
-        var recipients = ParseRecipients(submission.Recipients);
+        var recipients = ParseRecipients(recipientList);
         if (recipients.Length == 0)
         {
             // No destination configured on the block — a content/config mistake.

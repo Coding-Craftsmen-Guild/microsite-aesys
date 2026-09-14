@@ -20,7 +20,7 @@
       novalidate
       class="flex flex-col gap-4">
     @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="Recipients" />
+    <input type="hidden" asp-for="PageKey" />
     <input type="hidden" asp-for="Theme" />
 
     @if (hasSummary)

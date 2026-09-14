@@ -7,9 +7,8 @@ namespace Aesys.Core.Shared.ContactForm;
 // invalid. Display names and ErrorMessages are dictionary ItemKeys — the
 // DataAnnotationLocalizerProvider (see RegisterCore) resolves them against the
 // Umbraco dictionary for the current culture, so validation summaries and field
-// names read in whatever language the page is. `Recipients` is a hidden,
-// server-trusted field carried from the block config — never shown to the visitor —
-// so the controller knows where to send without trusting a client-supplied address.
+// names read in whatever language the page is. The destination address is NOT carried
+// here — see PageKey.
 public sealed class ContactFormSubmission
 {
     [Display(Name = "ContactForm.NameLabel")]
@@ -38,11 +37,16 @@ public sealed class ContactFormSubmission
     [StringLength(4000, ErrorMessage = "ContactForm.MessageTooLong")]
     public string Message { get; set; }
 
-    // Server-trusted: the block's Recipients property, round-tripped through a
-    // hidden field so the POST knows its destination. Validated to be non-empty in
-    // the controller (not via [Required], since an empty/forged value is a config
-    // problem, not a user-facing validation error).
-    public string Recipients { get; set; }
+    // Which page the form was rendered on. The controller re-reads that page's Contact
+    // Form block to find the destination address.
+    //
+    // This deliberately does NOT carry the address itself. A recipient list bound from
+    // the request body is attacker-controlled however it is labelled — a valid
+    // antiforgery token is one GET away — so posting it turned the site into an open
+    // relay: arbitrary destination, arbitrary body, sent from the site's own SMTP
+    // identity. Forging a PageKey can only ever select another of this site's own
+    // configured addresses.
+    public Guid PageKey { get; set; }
 
     // Carries the section theme ("dark"/"light") from the initial render through
     // the POST so the controller's re-rendered partial styles match the section it

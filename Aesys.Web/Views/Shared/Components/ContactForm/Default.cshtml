@@ -5,10 +5,10 @@
 @{
     var theme = SectionVariants.Theme(Model.BackgroundColor, Model.Background is not null);
 
-    // Fresh, empty submission for the initial render. Recipients rides along as a
-    // hidden field so the POST knows where to send (server-trusted: it's the
-    // block's configured address, never visitor input).
-    var submission = new ContactFormSubmission { Recipients = Model.Recipients, Theme = theme };
+    // Fresh, empty submission for the initial render. The page key rides along as a
+    // hidden field so the controller can look the destination address up from this
+    // page's block — the address itself is never put in the form.
+    var submission = new ContactFormSubmission { PageKey = Model.PageKey, Theme = theme };
 }
 
 <section-block bg-image="@(Model.Background?.Url())" bg-color="@Model.BackgroundColor" data-component="contact-form">
